@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>學生註冊系統</title>
+    <style>
+         :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #f0f2f5;
+            --text: #333;
+            --error: #e63946;
+            --success: #2a9d8f;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: var(--secondary);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px var(--shadow);
+            width: 100%;
+            max-width: 450px;
+            padding: 30px;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin-bottom: 25px;
+            font-weight: 600;
+            font-size: 28px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+        }
+        
+        .form-group .icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+        }
+        
+        .form-group input {
+            padding-left: 15px;
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .notification {
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .error {
+            background-color: rgba(230, 57, 70, 0.1);
+            color: var(--error);
+            border: 1px solid var(--error);
+        }
+        
+        .success {
+            background-color: rgba(42, 157, 143, 0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+        
+        .form-header {
+            margin-bottom: 30px;
+        }
+        
+        .form-header img {
+            width: 80px;
+            margin-bottom: 15px;
+        }
+        
+        .form-footer {
+            margin-top: 25px;
+            font-size: 14px;
+            color: #777;
+        }
+        
+        .form-footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        /* 設定動畫效果 */
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .container {
+            animation: fadeIn 0.6s ease-out;
+        }
+        /* 響應式設計 */
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            h2 {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="form-header">
+            <img src="LOGO.png" alt="學校標誌">
+            <h2>學生註冊系統</h2>
+        </div>
+
+        <form id="studentRegisterForm">
+            <div class="form-group">
+                <input type="text" id="newStudentId" placeholder="學號" required>
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="newStudentName" placeholder="姓名" required>
+            </div>
+
+            <div class="form-group">
+                <input type="password" id="newStudentPassword" placeholder="密碼" required>
+            </div>
+
+            <div class="form-group">
+                <input type="password" id="confirmPassword" placeholder="確認密碼" required>
+            </div>
+
+            <button type="submit" class="btn">建立帳號</button>
+        </form>
+
+        <div id="notification" class="notification"></div>
+
+        <div class="form-footer">
+            已有帳號？<a href="#" id="loginLink">返回登入</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('studentRegisterForm');
+            const notification = document.getElementById('notification');
+
+            // 模擬返回登入頁面的功能
+            document.getElementById('loginLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('返回登入頁面功能尚未實現');
+            });
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // 獲取表單數據
+                const studentId = document.getElementById('newStudentId').value.trim();
+                const studentName = document.getElementById('newStudentName').value.trim();
+                const password = document.getElementById('newStudentPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                // 基本表單驗證
+                if (!studentId || !studentName || !password) {
+                    showNotification('請填寫所有必填欄位', 'error');
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    showNotification('密碼與確認密碼不符', 'error');
+                    return;
+                }
+
+                if (password.length < 6) {
+                    showNotification('密碼長度至少需要6個字符', 'error');
+                    return;
+                }
+
+                // 模擬提交到伺服器
+                setTimeout(function() {
+                    // 假設註冊成功
+                    showNotification('註冊成功！歡迎 ' + studentName + '！', 'success');
+                    form.reset();
+
+                    // 跳轉到登入頁面的模擬（實際開發中可以替換為真實跳轉）
+                    setTimeout(function() {
+                        alert('現在即將返回登入頁面');
+                    }, 2000);
+                }, 1000);
+            });
+
+            // 顯示通知函數
+            function showNotification(message, type) {
+                notification.textContent = message;
+                notification.className = 'notification ' + type;
+                notification.style.display = 'block';
+
+                // 5秒後自動隱藏通知
+                setTimeout(function() {
+                    notification.style.display = 'none';
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+
+</html>

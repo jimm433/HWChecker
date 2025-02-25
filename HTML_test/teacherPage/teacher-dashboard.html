@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>教師管理介面</title>
+    <link rel="stylesheet" type="text/css" href="teacher-dashboard.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- 側邊欄 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>教師管理系統</h2>
+                <div class="teacher-info">
+                    <p>王大明 教授</p>
+                    <p>資訊工程學系</p>
+                </div>
+            </div>
+            <ul class="menu">
+                <li class="menu-item active">儀表板</li>
+                <li class="menu-item">課程管理</li>
+                <li class="menu-item">學生成績</li>
+                <li class="menu-item">作業批改</li>
+                <li class="menu-item">考試管理</li>
+                <li class="menu-item">教材上傳</li>
+                <li class="menu-item">公告管理</li>
+            </ul>
+            <div class="logout">登出系統</div>
+        </div>
+
+        <!-- 主要內容區域 -->
+        <div class="main-content">
+            <div class="header">
+                <h1>歡迎回來，王大明教授</h1>
+            </div>
+
+            <!-- 快速統計 -->
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <h3>本學期課程數</h3>
+                    <p>4</p>
+                </div>
+                <div class="stat-card">
+                    <h3>總修課人數</h3>
+                    <p>156</p>
+                </div>
+                <div class="stat-card">
+                    <h3>待批改作業</h3>
+                    <p>23</p>
+                </div>
+                <div class="stat-card">
+                    <h3>最新公告數</h3>
+                    <p>5</p>
+                </div>
+            </div>
+
+            <!-- 內容卡片 -->
+            <div class="content-cards">
+                <!-- 近期課程卡片 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>近期課程</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="course-item">
+                            <div class="course-time">星期一 9:00</div>
+                            <div class="course-name">程式設計</div>
+                        </div>
+                        <div class="course-item">
+                            <div class="course-time">星期三 13:30</div>
+                            <div class="course-name">資料結構</div>
+                        </div>
+                        <div class="course-item">
+                            <div class="course-time">星期四 15:00</div>
+                            <div class="course-name">演算法</div>
+                        </div>
+                        <div class="course-item">
+                            <div class="course-time">星期五 10:00</div>
+                            <div class="course-name">資料庫系統</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 待處理事項卡片 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>待處理事項</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="todo-item">
+                            <div class="todo-status"></div>
+                            <div class="todo-info">
+                                <div>程式設計作業批改 (23份)</div>
+                                <div class="todo-deadline">截止日期：2025/03/01</div>
+                            </div>
+                        </div>
+                        <div class="todo-item">
+                            <div class="todo-status"></div>
+                            <div class="todo-info">
+                                <div>資料結構期中考製題</div>
+                                <div class="todo-deadline">截止日期：2025/03/15</div>
+                            </div>
+                        </div>
+                        <div class="todo-item">
+                            <div class="todo-status"></div>
+                            <div class="todo-info">
+                                <div>演算法課程教材更新</div>
+                                <div class="todo-deadline">截止日期：2025/03/10</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 最新公告卡片 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>最新公告</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="announcement-item">
+                            <div class="announcement-date">2025/02/24</div>
+                            <div class="announcement-content">
+                                程式設計期中考注意事項
+                                <span class="announcement-badge">新</span>
+                            </div>
+                        </div>
+                        <div class="announcement-item">
+                            <div class="announcement-date">2025/02/23</div>
+                            <div class="announcement-content">
+                                資料結構課程調課通知
+                            </div>
+                        </div>
+                        <div class="announcement-item">
+                            <div class="announcement-date">2025/02/22</div>
+                            <div class="announcement-content">
+                                演算法作業繳交期限
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="teacher-dashboard.js"></script>
+</body>
+
+</html>
