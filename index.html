@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>學生與教師登入系統</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+    <div class="container right-panel-active">
+        <!-- 學生登入 -->
+        <div class="container__form container--signup">
+            <form action="#" class="form" id="form1">
+                <h2 class="form__title">學生登入</h2>
+                <input type="text" placeholder="學號" class="input" />
+                <input type="password" placeholder="密碼" class="input" />
+                <a href="#" class="link">忘記密碼?</a>
+                <button class="btn">登入</button>
+
+                <!-- "註冊" 按鈕 (只給學生用) -->
+                <button type="button" class="btn" id="studentRegisterBtn" style="margin-top: 0.5rem;">
+                    註冊
+                </button>
+            </form>
+        </div>
+
+        <!-- 教師登入 -->
+        <div class="container__form container--signin">
+            <form action="#" class="form" id="form2">
+                <h2 class="form__title">教師登入</h2>
+                <input type="text" placeholder="教師編號" class="input" />
+                <input type="password" placeholder="密碼" class="input" />
+                <a href="#" class="link">忘記密碼?</a>
+                <button class="btn">登入</button>
+            </form>
+        </div>
+
+        <!-- Overlay (原有設計) -->
+        <div class="container__overlay">
+            <div class="overlay">
+                <div class="overlay__panel overlay--left">
+                    <button class="btn" id="signIn">教師登入</button>
+                </div>
+                <div class="overlay__panel overlay--right">
+                    <button class="btn" id="signUp">學生登入</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 指向我們的 script.js -->
+    <script src="script.js"></script>
+</body>
+
+</html>
