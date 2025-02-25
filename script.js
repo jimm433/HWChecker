@@ -97,8 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 7. 學生註冊按鈕事件 (修正路徑)
     studentRegisterBtn.addEventListener("click", () => {
-        // 假設 `index.html` 和 `HTML_test/` 目錄同層
-        window.location.href = '/HTML_test/studentRegister/student-register.html';
+        window.location.href = 'studentRegister/student-register.html';
     });
 
 });
