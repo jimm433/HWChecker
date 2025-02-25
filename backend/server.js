@@ -4,9 +4,11 @@ const cors = require("cors");
 
 const app = express();
 
-// 允許 CORS（開放 Netlify 前端存取）
+// 允許 CORS（開放 Netlify 前端存取，並允許環境變數控制）
+const CLIENT_URL = process.env.CLIENT_URL || "https://earnest-queijadas-6b0801.netlify.app";
+
 app.use(cors({
-    origin: "https://earnest-queijadas-6b0801.netlify.app", // 指定 Netlify 網站
+    origin: CLIENT_URL, // 允許 Netlify 網站存取
     methods: "GET,POST",
     credentials: true
 }));
