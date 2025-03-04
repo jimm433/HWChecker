@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>作業批改 - 教師管理系統</title>
+    <link rel="stylesheet" type="text/css" href="../teacher-dashboard.css">
+    <link rel="stylesheet" type="text/css" href="assignment-grading.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- 側邊欄 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>教師管理系統</h2>
+                <div class="teacher-info">
+                    <p>王大明 教授</p>
+                    <p>資訊工程學系</p>
+                </div>
+            </div>
+            <ul class="menu">
+                <li class="menu-item">儀表板</li>
+                <li class="menu-item">課程管理</li>
+                <li class="menu-item">學生成績</li>
+                <li class="menu-item active">作業批改</li>
+                <li class="menu-item">考試管理</li>
+                <li class="menu-item">教材上傳</li>
+                <li class="menu-item">公告管理</li>
+            </ul>
+            <div class="logout">登出系統</div>
+        </div>
+
+        <!-- 主要內容區域 -->
+        <div class="main-content">
+            <div class="header">
+                <h1>作業批改</h1>
+                <p>利用AI輔助批改學生作業</p>
+            </div>
+
+            <!-- 作業批改區域 -->
+            <div class="grading-section">
+                <!-- 作業選擇 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>選擇作業</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="form-group">
+                            <label for="course-select">課程：</label>
+                            <select id="course-select" class="form-control">
+                                <option value="">請選擇課程</option>
+                                <option value="programming">程式設計</option>
+                                <option value="datastructure">資料結構</option>
+                                <option value="algorithm">演算法</option>
+                                <option value="database">資料庫系統</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="assignment-select">作業：</label>
+                            <select id="assignment-select" class="form-control" disabled>
+                                <option value="">請先選擇課程</option>
+                            </select>
+                        </div>
+                        <button id="load-assignments" class="button">載入待批改作業</button>
+                    </div>
+                </div>
+
+                <!-- AI批改控制區域 -->
+                <div class="card" id="ai-control-panel">
+                    <div class="card-header">
+                        <h3>AI批改控制</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="switch-container">
+                            <label class="switch">
+                                <input type="checkbox" id="auto-grade-toggle">
+                                <span class="slider round"></span>
+                            </label>
+                            <span class="switch-label">啟用AI自動批改</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="grading-criteria">評分標準：</label>
+                            <select id="grading-criteria" class="form-control">
+                                <option value="strict">嚴格標準</option>
+                                <option value="normal" selected>一般標準</option>
+                                <option value="lenient">寬鬆標準</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ai-feedback-level">回饋詳細程度：</label>
+                            <select id="ai-feedback-level" class="form-control">
+                                <option value="brief">簡短</option>
+                                <option value="normal" selected>一般</option>
+                                <option value="detailed">詳細</option>
+                            </select>
+                        </div>
+                        <button id="batch-grade" class="button" disabled>批次AI批改</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 待批改作業列表 -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>待批改作業列表</h3>
+                    <div class="card-header-actions">
+                        <span class="assignment-count">共 <span id="assignment-count">0</span> 筆</span>
+                        <button id="refresh-list" class="button-small">重新整理</button>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="table-container">
+                        <table class="assignment-table">
+                            <thead>
+                                <tr>
+                                    <th>學生姓名</th>
+                                    <th>學號</th>
+                                    <th>繳交時間</th>
+                                    <th>AI批改狀態</th>
+                                    <th>AI評分</th>
+                                    <th>教師確認</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assignment-list">
+                                <tr class="empty-row">
+                                    <td colspan="7">請選擇課程和作業</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 作業批改詳情 (模態視窗) -->
+            <div id="grading-modal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>作業批改</h2>
+                        <span class="close-modal">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="student-info">
+                            <div class="info-item">
+                                <span class="info-label">學生：</span>
+                                <span id="modal-student-name">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">學號：</span>
+                                <span id="modal-student-id">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">課程：</span>
+                                <span id="modal-course-name">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">作業：</span>
+                                <span id="modal-assignment-name">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">繳交時間：</span>
+                                <span id="modal-submit-time">-</span>
+                            </div>
+                        </div>
+
+                        <div class="assignment-details">
+                            <div class="tabs">
+                                <div class="tab active" data-tab="submission">學生作業</div>
+                                <div class="tab" data-tab="ai-grade">AI批改結果</div>
+                                <div class="tab" data-tab="teacher-grade">教師批改</div>
+                            </div>
+
+                            <div class="tab-content active" id="submission-content">
+                                <h3>學生作業內容</h3>
+                                <div class="code-viewer" id="student-code">
+                                    <pre><code></code></pre>
+                                </div>
+                                <div class="file-attachments">
+                                    <h4>附加檔案</h4>
+                                    <ul id="file-list">
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="tab-content" id="ai-grade-content">
+                                <div class="ai-status">
+                                    <span class="ai-status-label">AI批改狀態：</span>
+                                    <span id="ai-status-value">未處理</span>
+                                    <button id="trigger-ai-grade" class="button">啟動AI批改</button>
+                                </div>
+                                <div class="grading-results">
+                                    <div class="grade-summary">
+                                        <div class="grade-score">
+                                            <span class="score-value" id="ai-score">-</span>
+                                            <span class="score-label">分</span>
+                                        </div>
+                                        <div class="grade-chart">
+                                            <div class="chart-title">評分項目分佈</div>
+                                            <div class="chart-container" id="grade-chart-container">
+                                                <!-- AI評分項目圖表將在此渲染 -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grade-details">
+                                        <h4>AI評語</h4>
+                                        <div id="ai-comments" class="comments-section">
+                                            <!-- AI評語將在此顯示 -->
+                                        </div>
+                                        <h4>詳細評分項目</h4>
+                                        <table class="grading-table" id="ai-grading-items">
+                                            <thead>
+                                                <tr>
+                                                    <th>評分項目</th>
+                                                    <th>得分</th>
+                                                    <th>滿分</th>
+                                                    <th>評語</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- AI評分項目將在此顯示 -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-content" id="teacher-grade-content">
+                                <h3>教師批改</h3>
+                                <div class="teacher-grade-form">
+                                    <div class="form-group">
+                                        <label for="teacher-score">總分：</label>
+                                        <input type="number" id="teacher-score" min="0" max="100" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="teacher-comments">教師評語：</label>
+                                        <textarea id="teacher-comments" class="form-control" rows="5"></textarea>
+                                    </div>
+                                    <div class="checkbox-group">
+                                        <input type="checkbox" id="accept-ai-grade">
+                                        <label for="accept-ai-grade">採用AI評分結果</label>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button id="save-grade" class="button">儲存批改結果</button>
+                                        <button id="cancel-grade" class="button button-secondary">取消</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../teacherPage/teacher-dashboard.js"></script>
+    <script src="assignment-grading.js"></script>
+</body>
+
+</html>
