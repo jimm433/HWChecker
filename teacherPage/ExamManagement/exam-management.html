@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>考試管理 - 教師管理系統</title>
+    <link rel="stylesheet" type="text/css" href="../teacher-dashboard.css">
+    <link rel="stylesheet" type="text/css" href="exam-management.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- 側邊欄 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>教師管理系統</h2>
+                <div class="teacher-info">
+                    <p>王大明 教授</p>
+                    <p>資訊工程學系</p>
+                </div>
+            </div>
+            <ul class="menu">
+                <li class="menu-item">儀表板</li>
+                <li class="menu-item">課程管理</li>
+                <li class="menu-item">學生成績</li>
+                <li class="menu-item">作業批改</li>
+                <li class="menu-item active">考試管理</li>
+                <li class="menu-item">教材上傳</li>
+                <li class="menu-item">公告管理</li>
+            </ul>
+            <div class="logout">登出系統</div>
+        </div>
+
+        <!-- 主要內容區域 -->
+        <div class="main-content">
+            <div class="header">
+                <h1>考試管理</h1>
+                <p>創建、管理考試與試題</p>
+            </div>
+
+            <!-- 考試管理區域 -->
+            <div class="exam-management-section">
+                <!-- 左側考試列表 -->
+                <div class="card exam-list-card">
+                    <div class="card-header">
+                        <h3>考試列表</h3>
+                        <button id="create-exam-btn" class="button-small">新增考試</button>
+                    </div>
+                    <div class="card-content">
+                        <div class="search-box">
+                            <input type="text" id="search-exam" placeholder="搜尋考試..." class="form-control">
+                        </div>
+                        <div class="filter-options">
+                            <select id="course-filter" class="form-control">
+                                <option value="all">所有課程</option>
+                                <option value="programming">程式設計</option>
+                                <option value="datastructure">資料結構</option>
+                                <option value="algorithm">演算法</option>
+                                <option value="database">資料庫系統</option>
+                            </select>
+                            <select id="status-filter" class="form-control">
+                                <option value="all">所有狀態</option>
+                                <option value="upcoming">即將舉行</option>
+                                <option value="ongoing">進行中</option>
+                                <option value="completed">已完成</option>
+                            </select>
+                        </div>
+                        <ul class="exam-list" id="exam-list">
+                            <li class="exam-item active" data-id="exam1" data-course="programming">
+                                <div class="exam-status upcoming"></div>
+                                <div class="exam-info">
+                                    <div class="exam-title">程式設計期中考</div>
+                                    <div class="exam-meta">
+                                        <span class="exam-course">課程：程式設計</span>
+                                        <span class="exam-date">日期：2025/04/10</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <!-- 其他考試項目 -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 右側考試詳情 -->
+                <div class="card exam-detail-card">
+                    <!-- 考試詳情內容 -->
+                    <div class="card-header">
+                        <h3>考試詳情</h3>
+                        <div class="exam-actions">
+                            <button id="edit-exam-btn" class="button-small">編輯考試</button>
+                            <button id="delete-exam-btn" class="button-small button-danger">刪除考試</button>
+                        </div>
+                    </div>
+
+                    <!-- 考試詳情的不同分頁：基本資訊、試題管理、成績統計 -->
+                    <div class="card-content">
+                        <!-- 標籤切換 -->
+                        <div class="exam-tabs">
+                            <div class="tab active" data-tab="basic-info">基本資訊</div>
+                            <div class="tab" data-tab="questions">試題管理</div>
+                            <div class="tab" data-tab="results">成績統計</div>
+                        </div>
+
+                        <!-- 各分頁的內容區域 -->
+                        <div class="tab-content active" id="basic-info-content">
+                            <!-- 基本資訊內容 -->
+                        </div>
+                        <div class="tab-content" id="questions-content">
+                            <!-- 試題管理內容 -->
+                        </div>
+                        <div class="tab-content" id="results-content">
+                            <!-- 成績統計內容 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增/編輯考試模態視窗 -->
+    <div id="exam-modal" class="modal">
+        <!-- 新增/編輯考試的表單 -->
+    </div>
+
+    <!-- 上傳試題檔案模態視窗 -->
+    <div id="upload-question-modal" class="modal">
+        <!-- 上傳試題檔案的表單 -->
+    </div>
+
+    <!-- JavaScript 引入 -->
+    <script src="../teacher-dashboard.js"></script>
+    <script src="exam-management.js"></script>
+</body>
+
+</html>
