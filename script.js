@@ -1,3 +1,4 @@
+javascript
 document.addEventListener('DOMContentLoaded', function() {
     // 1. 取得各種元素
     const signInBtn = document.getElementById("signIn"); // 教師登入面板切換按鈕
@@ -6,6 +7,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const teacherForm = document.getElementById("form2"); // 教師登入表單
     const studentRegisterBtn = document.getElementById("studentRegisterBtn"); // 學生註冊按鈕
     const container = document.querySelector(".container");
+
+    // 測試帳號 - 直接寫在前端用於測試
+    const testAccounts = {
+        teachers: [
+            { userId: "teacher001", password: "Pass@123", role: "teacher" }
+        ],
+        students: [
+            { userId: "student001", password: "Learn@123", role: "student" }
+        ]
+    };
 
     // 2. 表單切換顯示 (原先就有的功能)
     signInBtn.addEventListener("click", () => {
@@ -36,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // 4. 共用的「登入」函式
+    // 4. 修改登入函式以使用本地測試帳號
     async function loginUser(formElement, role) {
         clearError(formElement);
 
@@ -48,38 +59,70 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        try {
-            // 向後端發送登入請求
-            const response = await fetch('/api/login', { // 直接使用相對路徑，避免 localhost 限制
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId, password })
-            });
+        // 檢查是否為測試帳號
+        let isAuthenticated = false;
+        let userRole = '';
 
-            const data = await response.json();
+        if (role === 'student') {
+            const student = testAccounts.students.find(s => s.userId === userId && s.password === password);
+            if (student) {
+                isAuthenticated = true;
+                userRole = student.role;
+            }
+        } else {
+            const teacher = testAccounts.teachers.find(t => t.userId === userId && t.password === password);
+            if (teacher) {
+                isAuthenticated = true;
+                userRole = teacher.role;
+            }
+        }
 
-            if (!response.ok) {
-                showError(data.message || '登入失敗', formElement);
+        // 如果不是測試帳號，才嘗試呼叫後端API
+        if (!isAuthenticated) {
+            try {
+                // 向後端發送登入請求
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    showError(data.message || '登入失敗', formElement);
+                    return;
+                }
+
+                userRole = data.role;
+                // 模擬一個假的token
+                const fakeToken = btoa(JSON.stringify({ userId, role: userRole, timestamp: Date.now() }));
+                localStorage.setItem('token', fakeToken);
+            } catch (error) {
+                // 如果後端請求失敗，直接顯示錯誤訊息
+                showError('帳號或密碼錯誤', formElement);
                 return;
             }
+        } else {
+            // 測試帳號登入成功，生成假的token
+            const fakeToken = btoa(JSON.stringify({ userId, role: userRole, timestamp: Date.now() }));
+            localStorage.setItem('token', fakeToken);
+        }
 
-            alert(`${role === 'student' ? '學生' : '教師'}登入成功！`);
-            localStorage.setItem('token', data.token); // 儲存 JWT token
+        // 登入成功訊息和導向
+        alert(`${role === 'student' ? '學生' : '教師'}登入成功！`);
 
-            // 根據後端回傳的角色導向不同的頁面
-            switch (data.role) {
-                case 'student':
-                    window.location.href = '/student-dashboard.html';
-                    break;
-                case 'teacher':
-                    window.location.href = '/teacher-dashboard.html';
-                    break;
-                default:
-                    showError('身份不明，請洽管理員', formElement);
-                    break;
-            }
-        } catch (error) {
-            showError('伺服器錯誤，請稍後再試', formElement);
+        // 根據角色導向不同的頁面
+        switch (userRole) {
+            case 'student':
+                window.location.href = '/student-dashboard.html';
+                break;
+            case 'teacher':
+                window.location.href = '/teacher-dashboard.html';
+                break;
+            default:
+                showError('身份不明，請洽管理員', formElement);
+                break;
         }
     }
 
@@ -99,5 +142,4 @@ document.addEventListener('DOMContentLoaded', function() {
     studentRegisterBtn.addEventListener("click", () => {
         window.location.href = 'studentRegister/student-register.html';
     });
-
 });
