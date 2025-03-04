@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>課程管理 - 教師管理系統</title>
+    <link rel="stylesheet" type="text/css" href="../teacher-dashboard.css">
+    <link rel="stylesheet" type="text/css" href="course-management.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- 側邊欄 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>教師管理系統</h2>
+                <div class="teacher-info">
+                    <p>王大明 教授</p>
+                    <p>資訊工程學系</p>
+                </div>
+            </div>
+            <ul class="menu">
+                <li class="menu-item">儀表板</li>
+                <li class="menu-item active">課程管理</li>
+                <li class="menu-item">學生成績</li>
+                <li class="menu-item">作業批改</li>
+                <li class="menu-item">考試管理</li>
+                <li class="menu-item">教材上傳</li>
+                <li class="menu-item">公告管理</li>
+            </ul>
+            <div class="logout">登出系統</div>
+        </div>
+
+        <!-- 主要內容區域 -->
+        <div class="main-content">
+            <div class="header">
+                <h1>課程管理</h1>
+                <p>管理您的課程、學生與教材</p>
+            </div>
+
+            <!-- 課程列表與功能區 -->
+            <div class="course-management-section">
+                <!-- 左側課程列表 -->
+                <div class="card course-list-card">
+                    <div class="card-header">
+                        <h3>我的課程</h3>
+                        <button id="add-course-btn" class="button-small">新增課程</button>
+                    </div>
+                    <div class="card-content">
+                        <div class="search-box">
+                            <input type="text" id="search-course" placeholder="搜尋課程..." class="form-control">
+                        </div>
+                        <ul class="course-list" id="course-list">
+                            <li class="course-item active" data-id="programming">
+                                <div class="course-item-header">
+                                    <span class="course-code">CSC101</span>
+                                    <span class="course-semester">112-2</span>
+                                </div>
+                                <div class="course-name">程式設計</div>
+                                <div class="course-info">
+                                    <span class="course-time">星期一 9:00-12:00</span>
+                                    <span class="student-count">38 位學生</span>
+                                </div>
+                            </li>
+                            <li class="course-item" data-id="datastructure">
+                                <div class="course-item-header">
+                                    <span class="course-code">CSC201</span>
+                                    <span class="course-semester">112-2</span>
+                                </div>
+                                <div class="course-name">資料結構</div>
+                                <div class="course-info">
+                                    <span class="course-time">星期三 13:30-16:30</span>
+                                    <span class="student-count">42 位學生</span>
+                                </div>
+                            </li>
+                            <li class="course-item" data-id="algorithm">
+                                <div class="course-item-header">
+                                    <span class="course-code">CSC303</span>
+                                    <span class="course-semester">112-2</span>
+                                </div>
+                                <div class="course-name">演算法</div>
+                                <div class="course-info">
+                                    <span class="course-time">星期四 15:00-18:00</span>
+                                    <span class="student-count">35 位學生</span>
+                                </div>
+                            </li>
+                            <li class="course-item" data-id="database">
+                                <div class="course-item-header">
+                                    <span class="course-code">CSC305</span>
+                                    <span class="course-semester">112-2</span>
+                                </div>
+                                <div class="course-name">資料庫系統</div>
+                                <div class="course-info">
+                                    <span class="course-time">星期五 10:00-13:00</span>
+                                    <span class="student-count">41 位學生</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 右側課程詳情 -->
+                <div class="card course-detail-card">
+                    <div class="card-header">
+                        <h3>課程詳情</h3>
+                        <div class="course-actions">
+                            <button id="edit-course-btn" class="button-small">編輯課程</button>
+                            <button id="delete-course-btn" class="button-small button-danger">刪除課程</button>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="course-detail-header">
+                            <div class="course-title">
+                                <h2 id="detail-course-name">程式設計</h2>
+                                <span class="course-code" id="detail-course-code">CSC101</span>
+                                <span class="course-semester" id="detail-course-semester">112-2</span>
+                            </div>
+                            <div class="course-status">
+                                <span class="status-badge active">進行中</span>
+                            </div>
+                        </div>
+
+                        <div class="course-tabs">
+                            <div class="tab active" data-tab="basic-info">基本資訊</div>
+                            <div class="tab" data-tab="students">學生名單</div>
+                            <div class="tab" data-tab="materials">教材管理</div>
+                            <div class="tab" data-tab="assignments">作業管理</div>
+                        </div>
+
+                        <!-- 基本資訊內容 -->
+                        <div class="tab-content active" id="basic-info-content">
+                            <div class="info-group">
+                                <label class="info-label">課程名稱：</label>
+                                <span id="info-course-name">程式設計</span>
+                            </div>
+                            <div class="info-group">
+                                <label class="info-label">課程代碼：</label>
+                                <span id="info-course-code">CSC101</span>
+                            </div>
+                            <div class="info-group">
+                                <label class="info-label">學期：</label>
+                                <span id="info-course-semester">112-2</span>
+                            </div>
+                            <div class="info-group">
+                                <label class="info-label">課程時間：</label>
+                                <span id="info-course-time">星期一 9:00-12:00</span>
+                            </div>
+                            <div class="info-group">
+                                <label class="info-label">教室位置：</label>
+                                <span id="info-course-location">資訊大樓301教室</span>
+                            </div>
+                            <div class="info-group">
+                                <label class="info-label">學分數：</label>
+                                <span id="info-course-credits">3</span>
+                            </div>
+                            <div class="info-group">
+                                <label class="info-label">選課人數：</label>
+                                <span id="info-course-students">38 位學生</span>
+                            </div>
+                            <div class="info-group full-width">
+                                <label class="info-label">課程描述：</label>
+                                <div id="info-course-description" class="course-description">
+                                    本課程介紹程式設計的基本概念與技巧，包含變數、運算式、流程控制、函數、陣列、指標、結構與檔案處理等主題。學生將使用C語言進行程式設計實作，培養邏輯思考與問題解決能力。課程除了理論講授外，還包含多個實作練習與專題開發，幫助學生熟練程式設計技巧並應用於實際問題。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 學生名單內容 -->
+                        <div class="tab-content" id="students-content">
+                            <div class="student-list-controls">
+                                <div class="search-box">
+                                    <input type="text" id="search-student" placeholder="搜尋學生..." class="form-control">
+                                </div>
+                                <div class="list-actions">
+                                    <button id="add-student-btn" class="button-small">新增學生</button>
+                                    <button id="export-student-list-btn" class="button-small">匯出名單</button>
+                                </div>
+                            </div>
+
+                            <div class="table-container">
+                                <table class="student-table">
+                                    <thead>
+                                        <tr>
+                                            <th>學號</th>
+                                            <th>姓名</th>
+                                            <th>系所</th>
+                                            <th>年級</th>
+                                            <th>出席率</th>
+                                            <th>期中成績</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="student-list">
+                                        <tr>
+                                            <td>S10911001</td>
+                                            <td>陳小明</td>
+                                            <td>資訊工程學系</td>
+                                            <td>二年級</td>
+                                            <td>95%</td>
+                                            <td>87</td>
+                                            <td>
+                                                <button class="button-small">查看</button>
+                                                <button class="button-small button-danger">移除</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>S10911002</td>
+                                            <td>林雅婷</td>
+                                            <td>資訊工程學系</td>
+                                            <td>二年級</td>
+                                            <td>100%</td>
+                                            <td>92</td>
+                                            <td>
+                                                <button class="button-small">查看</button>
+                                                <button class="button-small button-danger">移除</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>S10911003</td>
+                                            <td>王大華</td>
+                                            <td>資訊工程學系</td>
+                                            <td>二年級</td>
+                                            <td>88%</td>
+                                            <td>79</td>
+                                            <td>
+                                                <button class="button-small">查看</button>
+                                                <button class="button-small button-danger">移除</button>
+                                            </td>
+                                        </tr>
+                                        <!-- 更多學生... -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- 教材管理內容 -->
+                        <div class="tab-content" id="materials-content">
+                            <div class="materials-controls">
+                                <button id="upload-material-btn" class="button">上傳教材</button>
+                                <div class="materials-filter">
+                                    <select id="material-type-filter" class="form-control">
+                                        <option value="all">所有類型</option>
+                                        <option value="lecture">課程講義</option>
+                                        <option value="practice">實習教材</option>
+                                        <option value="reference">參考資料</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="materials-list" id="materials-list">
+                                <div class="material-item">
+                                    <div class="material-icon lecture"></div>
+                                    <div class="material-info">
+                                        <div class="material-name">第一週：程式設計基礎講義</div>
+                                        <div class="material-meta">
+                                            <span class="material-type">課程講義</span>
+                                            <span class="material-size">2.5 MB</span>
+                                            <span class="material-date">2025/02/15 上傳</span>
+                                        </div>
+                                    </div>
+                                    <div class="material-actions">
+                                        <button class="button-small">下載</button>
+                                        <button class="button-small button-danger">刪除</button>
+                                    </div>
+                                </div>
+
+                                <div class="material-item">
+                                    <div class="material-icon practice"></div>
+                                    <div class="material-info">
+                                        <div class="material-name">第一週：變數與運算式實習</div>
+                                        <div class="material-meta">
+                                            <span class="material-type">實習教材</span>
+                                            <span class="material-size">1.8 MB</span>
+                                            <span class="material-date">2025/02/16 上傳</span>
+                                        </div>
+                                    </div>
+                                    <div class="material-actions">
+                                        <button class="button-small">下載</button>
+                                        <button class="button-small button-danger">刪除</button>
+                                    </div>
+                                </div>
+
+                                <div class="material-item">
+                                    <div class="material-icon reference"></div>
+                                    <div class="material-info">
+                                        <div class="material-name">C語言參考手冊</div>
+                                        <div class="material-meta">
+                                            <span class="material-type">參考資料</span>
+                                            <span class="material-size">4.2 MB</span>
+                                            <span class="material-date">2025/02/10 上傳</span>
+                                        </div>
+                                    </div>
+                                    <div class="material-actions">
+                                        <button class="button-small">下載</button>
+                                        <button class="button-small button-danger">刪除</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 作業管理內容 -->
+                        <div class="tab-content" id="assignments-content">
+                            <div class="assignments-controls">
+                                <button id="create-assignment-btn" class="button">建立作業</button>
+                                <div class="assignments-filter">
+                                    <select id="assignment-status-filter" class="form-control">
+                                        <option value="all">所有狀態</option>
+                                        <option value="active">進行中</option>
+                                        <option value="upcoming">即將開始</option>
+                                        <option value="past">已結束</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="assignments-list" id="assignments-list">
+                                <div class="assignment-item">
+                                    <div class="assignment-status active"></div>
+                                    <div class="assignment-info">
+                                        <div class="assignment-name">作業1：基礎語法練習</div>
+                                        <div class="assignment-meta">
+                                            <span class="assignment-deadline">截止日期：2025/03/01 23:59</span>
+                                            <span class="assignment-submitted">已繳交：32/38</span>
+                                        </div>
+                                    </div>
+                                    <div class="assignment-actions">
+                                        <button class="button-small">查看</button>
+                                        <button class="button-small">編輯</button>
+                                        <button class="button-small button-danger">刪除</button>
+                                    </div>
+                                </div>
+
+                                <div class="assignment-item">
+                                    <div class="assignment-status upcoming"></div>
+                                    <div class="assignment-info">
+                                        <div class="assignment-name">作業2：條件與循環結構</div>
+                                        <div class="assignment-meta">
+                                            <span class="assignment-deadline">截止日期：2025/03/15 23:59</span>
+                                            <span class="assignment-submitted">已繳交：0/38</span>
+                                        </div>
+                                    </div>
+                                    <div class="assignment-actions">
+                                        <button class="button-small">查看</button>
+                                        <button class="button-small">編輯</button>
+                                        <button class="button-small button-danger">刪除</button>
+                                    </div>
+                                </div>
+
+                                <div class="assignment-item">
+                                    <div class="assignment-status past"></div>
+                                    <div class="assignment-info">
+                                        <div class="assignment-name">作業0：環境設置</div>
+                                        <div class="assignment-meta">
+                                            <span class="assignment-deadline">截止日期：2025/02/20 23:59</span>
+                                            <span class="assignment-submitted">已繳交：38/38</span>
+                                        </div>
+                                    </div>
+                                    <div class="assignment-actions">
+                                        <button class="button-small">查看</button>
+                                        <button class="button-small">編輯</button>
+                                        <button class="button-small button-danger">刪除</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增/編輯課程模態視窗 -->
+    <div id="course-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="course-modal-title">新增課程</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="course-form">
+                    <div class="form-group">
+                        <label for="course-name">課程名稱：</label>
+                        <input type="text" id="course-name" class="form-control" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="course-code">課程代碼：</label>
+                            <input type="text" id="course-code" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="course-semester">學期：</label>
+                            <input type="text" id="course-semester" class="form-control" placeholder="例：112-2" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="course-day">上課日：</label>
+                            <select id="course-day" class="form-control" required>
+                                <option value="">請選擇</option>
+                                <option value="星期一">星期一</option>
+                                <option value="星期二">星期二</option>
+                                <option value="星期三">星期三</option>
+                                <option value="星期四">星期四</option>
+                                <option value="星期五">星期五</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="course-time">上課時間：</label>
+                            <input type="text" id="course-time" class="form-control" placeholder="例：9:00-12:00" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="course-location">教室位置：</label>
+                            <input type="text" id="course-location" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="course-credits">學分數：</label>
+                            <input type="number" id="course-credits" class="form-control" min="0" max="6" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="course-description">課程描述：</label>
+                        <textarea id="course-description" class="form-control" rows="5" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" id="save-course-btn" class="button">儲存</button>
+                        <button type="button" id="cancel-course-btn" class="button button-secondary">取消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增學生模態視窗 -->
+    <div id="student-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>新增學生</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="add-student-form">
+                    <div class="form-group">
+                        <label for="student-id">學號：</label>
+                        <input type="text" id="student-id" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="student-name">姓名：</label>
+                        <input type="text" id="student-name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="student-department">系所：</label>
+                        <input type="text" id="student-department" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="student-year">年級：</label>
+                        <select id="student-year" class="form-control" required>
+                            <option value="">請選擇</option>
+                            <option value="一年級">一年級</option>
+                            <option value="二年級">二年級</option>
+                            <option value="三年級">三年級</option>
+                            <option value="四年級">四年級</option>
+                            <option value="碩士班">碩士班</option>
+                            <option value="博士班">博士班</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="button">新增</button>
+                        <button type="button" id="cancel-add-student-btn" class="button button-secondary">取消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../teacher-dashboard.js"></script>
+    <script src="course-management.js"></script>
+</body>
+
+</html>

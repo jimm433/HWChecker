@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (role === 'teacher') {
                 window.location.href = 'teacherPage/teacher-dashboard.html';
             } else {
-                window.location.href = '/student-dashboard.html';
+                window.location.href = 'studentPage/student-dashboard.html';
             }
         } else {
             showError('帳號或密碼錯誤', formElement);

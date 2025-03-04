@@ -1,0 +1,506 @@
+/* 課程管理頁面樣式 */
+
+
+/* 表單元素共通樣式 */
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+
+/* 表單排版 - 並排表單元素 */
+
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+
+/* 主要課程管理區域佈局 */
+
+.course-management-section {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+
+/* 課程列表卡片樣式 */
+
+.course-list-card {
+    max-height: calc(100vh - 150px);
+    overflow-y: auto;
+}
+
+.search-box {
+    margin-bottom: 15px;
+}
+
+.course-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.course-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.course-item:hover {
+    background-color: #f5f5f5;
+}
+
+.course-item.active {
+    background-color: #e6f3ff;
+    border-left: 3px solid #3498db;
+}
+
+.course-item-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.course-code {
+    color: #7f8c8d;
+    font-size: 0.85rem;
+}
+
+.course-semester {
+    background-color: #f0f5ff;
+    color: #3498db;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.8rem;
+}
+
+.course-name {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+.course-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #7f8c8d;
+}
+
+
+/* 課程詳情卡片樣式 */
+
+.course-detail-card {
+    max-height: calc(100vh - 150px);
+    overflow-y: auto;
+}
+
+.course-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.course-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.course-title {
+    flex: 1;
+}
+
+.course-title h2 {
+    margin: 0;
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+
+.course-status {
+    margin-left: 15px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-badge.active {
+    background-color: #e1f7e3;
+    color: #2ecc71;
+}
+
+.status-badge.inactive {
+    background-color: #f8eae9;
+    color: #e74c3c;
+}
+
+
+/* 課程詳情分頁標籤樣式 */
+
+.course-tabs {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-right: 5px;
+    font-weight: 600;
+    color: #7f8c8d;
+}
+
+.tab:hover {
+    color: #3498db;
+}
+
+.tab.active {
+    color: #3498db;
+    border-bottom-color: #3498db;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+
+/* 基本資訊樣式 */
+
+.info-group {
+    margin-bottom: 15px;
+    display: flex;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #2c3e50;
+    width: 120px;
+    flex-shrink: 0;
+}
+
+.info-group.full-width {
+    display: block;
+}
+
+.course-description {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+    margin-top: 5px;
+    line-height: 1.6;
+}
+
+
+/* 學生名單樣式 */
+
+.student-list-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.list-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.student-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.student-table th,
+.student-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.student-table th {
+    background-color: #f8f9fa;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.student-table tr:hover {
+    background-color: #f5f5f5;
+}
+
+
+/* 教材管理樣式 */
+
+.materials-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.materials-filter {
+    width: 200px;
+}
+
+.materials-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.material-item {
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    padding: 15px;
+    transition: background-color 0.2s;
+}
+
+.material-item:hover {
+    background-color: #edf2f7;
+}
+
+.material-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 24px;
+    margin-right: 15px;
+}
+
+.material-icon.lecture {
+    background-color: #e3f2fd;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%232196f3"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/></svg>');
+}
+
+.material-icon.practice {
+    background-color: #e8f5e9;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%234caf50"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/></svg>');
+}
+
+.material-icon.reference {
+    background-color: #fff3e0;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ff9800"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/></svg>');
+}
+
+.material-info {
+    flex: 1;
+}
+
+.material-name {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.material-meta {
+    display: flex;
+    font-size: 0.85rem;
+    color: #7f8c8d;
+    gap: 15px;
+}
+
+.material-actions {
+    display: flex;
+    gap: 10px;
+}
+
+
+/* 作業管理樣式 */
+
+.assignments-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.assignments-filter {
+    width: 200px;
+}
+
+.assignments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.assignment-item {
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    padding: 15px;
+    transition: background-color 0.2s;
+}
+
+.assignment-item:hover {
+    background-color: #edf2f7;
+}
+
+.assignment-status {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.assignment-status.active {
+    background-color: #2ecc71;
+}
+
+.assignment-status.upcoming {
+    background-color: #3498db;
+}
+
+.assignment-status.past {
+    background-color: #95a5a6;
+}
+
+.assignment-info {
+    flex: 1;
+}
+
+.assignment-name {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.assignment-meta {
+    display: flex;
+    font-size: 0.85rem;
+    color: #7f8c8d;
+    gap: 15px;
+}
+
+.assignment-actions {
+    display: flex;
+    gap: 10px;
+}
+
+
+/* 模態視窗樣式 */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    background-color: #3498db;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 8px 8px 0 0;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+.close-modal {
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+
+/* 按鈕樣式 */
+
+.button-small {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.button-small:hover {
+    background-color: #2980b9;
+}
+
+.button-secondary {
+    background-color: #95a5a6;
+}
+
+.button-secondary:hover {
+    background-color: #7f8c8d;
+}
+
+.button-danger {
+    background-color: #e74c3c;
+}
+
+.button-danger:hover {
+    background-color: #c0392b;
+}
