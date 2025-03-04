@@ -34,8 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     alert('學生成績頁面正在建設中');
                     break;
                 case '作業批改':
-                    // window.location.href = 'assignments.html';
-                    alert('作業批改頁面正在建設中');
+                    window.location.href = 'assignment-grading.html';
                     break;
                 case '考試管理':
                     // window.location.href = 'exams.html';
