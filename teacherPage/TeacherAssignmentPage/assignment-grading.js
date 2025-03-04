@@ -746,7 +746,7 @@ ORDER BY course_count DESC;`
             const page = this.textContent.trim();
             switch (page) {
                 case '儀表板':
-                    window.location.href = 'teacherPage/teacher-dashboard.html';
+                    window.location.href = 'teacher-dashboard.html';
                     break;
                 case '課程管理':
                     alert('課程管理頁面正在建設中');
