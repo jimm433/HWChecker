@@ -689,14 +689,11 @@ document.addEventListener('DOMContentLoaded', function() {
         alert(`已匯出 ${courseData.name} 課程的學生名單`);
     }
 
-    // 側邊欄選單項目點擊事件 (從teacher-dashboard.js)
+    // 側邊欄選單項目點擊事件
     document.querySelectorAll('.menu-item').forEach(item => {
         item.addEventListener('click', function() {
-            // 移除所有項目的active類
-            document.querySelectorAll('.menu-item').forEach(i => {
-                i.classList.remove('active');
-            });
-            // 為點擊的項目添加active類
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(i => i.classList.remove('active'));
             this.classList.add('active');
 
             // 選單導航
@@ -706,7 +703,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.href = '../teacher-dashboard.html';
                     break;
                 case '課程管理':
-                    // 已在當前頁面
+                    // 修正課程管理頁面的路徑
+                    window.location.href = '../CourseManagementPage/course-management.html';
                     break;
                 case '學生成績':
                     alert('學生成績頁面正在建設中');
@@ -715,7 +713,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.href = '../TeacherAssignmentPage/assignment-grading.html';
                     break;
                 case '考試管理':
-                    alert('考試管理頁面正在建設中');
+                    // 已在當前頁面，不做任何操作
                     break;
                 case '教材上傳':
                     alert('教材上傳頁面正在建設中');

@@ -26,8 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const page = this.textContent.trim();
             switch (page) {
                 case '課程管理':
-                    // window.location.href = 'courses.html';
-                    alert('課程管理頁面正在建設中');
+                    window.location.href = 'CourseManagementPage/course-management.html';
                     break;
                 case '學生成績':
                     // window.location.href = 'grades.html';

@@ -646,7 +646,31 @@ int main() {
             menuItems.forEach(i => i.classList.remove('active'));
             this.classList.add('active');
 
-            // 這裡可以添加頁面導航邏輯
+            // 選單導航
+            const page = this.textContent.trim();
+            switch (page) {
+                case '儀表板':
+                    window.location.href = '../teacher-dashboard.html';
+                    break;
+                case '課程管理':
+                    window.location.href = '../CourseManagementPage/course-management.html';
+                    break;
+                case '學生成績':
+                    alert('學生成績頁面正在建設中');
+                    break;
+                case '作業批改':
+                    window.location.href = '../TeacherAssignmentPage/assignment-grading.html';
+                    break;
+                case '考試管理':
+                    // 已在當前頁面
+                    break;
+                case '教材上傳':
+                    alert('教材上傳頁面正在建設中');
+                    break;
+                case '公告管理':
+                    alert('公告管理頁面正在建設中');
+                    break;
+            }
         });
     });
 
