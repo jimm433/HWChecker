@@ -34,81 +34,180 @@
         <div class="main-content">
             <div class="header">
                 <h1>考試管理</h1>
-                <p>創建、管理考試與試題</p>
+                <p>使用AI輔助創建與管理考試內容</p>
             </div>
 
             <!-- 考試管理區域 -->
-            <div class="exam-management-section">
+            <div class="exam-section">
                 <!-- 左側考試列表 -->
-                <div class="card exam-list-card">
+                <div class="card">
                     <div class="card-header">
                         <h3>考試列表</h3>
-                        <button id="create-exam-btn" class="button-small">新增考試</button>
+                        <button id="add-exam-btn" class="button">新增考試</button>
                     </div>
                     <div class="card-content">
-                        <div class="search-box">
-                            <input type="text" id="search-exam" placeholder="搜尋考試..." class="form-control">
-                        </div>
-                        <div class="filter-options">
-                            <select id="course-filter" class="form-control">
-                                <option value="all">所有課程</option>
-                                <option value="programming">程式設計</option>
-                                <option value="datastructure">資料結構</option>
-                                <option value="algorithm">演算法</option>
-                                <option value="database">資料庫系統</option>
-                            </select>
-                            <select id="status-filter" class="form-control">
-                                <option value="all">所有狀態</option>
-                                <option value="upcoming">即將舉行</option>
-                                <option value="ongoing">進行中</option>
-                                <option value="completed">已完成</option>
-                            </select>
-                        </div>
                         <ul class="exam-list" id="exam-list">
-                            <li class="exam-item active" data-id="exam1" data-course="programming">
+                            <li class="exam-item active" data-id="exam1">
                                 <div class="exam-status upcoming"></div>
                                 <div class="exam-info">
                                     <div class="exam-title">程式設計期中考</div>
-                                    <div class="exam-meta">
-                                        <span class="exam-course">課程：程式設計</span>
-                                        <span class="exam-date">日期：2025/04/10</span>
-                                    </div>
+                                    <div class="exam-date">2025/04/10</div>
                                 </div>
                             </li>
-                            <!-- 其他考試項目 -->
+                            <li class="exam-item" data-id="exam2">
+                                <div class="exam-status draft"></div>
+                                <div class="exam-info">
+                                    <div class="exam-title">資料結構小考1</div>
+                                    <div class="exam-date">未發布</div>
+                                </div>
+                            </li>
+                            <li class="exam-item" data-id="exam3">
+                                <div class="exam-status ended"></div>
+                                <div class="exam-info">
+                                    <div class="exam-title">資料庫系統期中考</div>
+                                    <div class="exam-date">2025/03/25</div>
+                                </div>
+                            </li>
                         </ul>
                     </div>
                 </div>
 
                 <!-- 右側考試詳情 -->
-                <div class="card exam-detail-card">
-                    <!-- 考試詳情內容 -->
+                <div class="card">
                     <div class="card-header">
                         <h3>考試詳情</h3>
                         <div class="exam-actions">
-                            <button id="edit-exam-btn" class="button-small">編輯考試</button>
-                            <button id="delete-exam-btn" class="button-small button-danger">刪除考試</button>
+                            <button id="edit-exam-btn" class="button">編輯考試</button>
+                            <button id="delete-exam-btn" class="button button-danger">刪除考試</button>
                         </div>
                     </div>
-
-                    <!-- 考試詳情的不同分頁：基本資訊、試題管理、成績統計 -->
                     <div class="card-content">
-                        <!-- 標籤切換 -->
-                        <div class="exam-tabs">
-                            <div class="tab active" data-tab="basic-info">基本資訊</div>
+                        <div class="tabs">
+                            <div class="tab active" data-tab="info">基本資訊</div>
                             <div class="tab" data-tab="questions">試題管理</div>
-                            <div class="tab" data-tab="results">成績統計</div>
+                            <div class="tab" data-tab="students">學生狀態</div>
                         </div>
 
-                        <!-- 各分頁的內容區域 -->
-                        <div class="tab-content active" id="basic-info-content">
-                            <!-- 基本資訊內容 -->
+                        <!-- 基本資訊標籤內容 -->
+                        <div class="tab-content active" id="info-tab">
+                            <div class="info-group">
+                                <h2 id="exam-title">程式設計期中考</h2>
+                                <div class="status-badge upcoming">即將舉行</div>
+                            </div>
+
+                            <div class="info-item">
+                                <label>課程：</label>
+                                <span id="exam-course">程式設計</span>
+                            </div>
+
+                            <div class="info-item">
+                                <label>日期：</label>
+                                <span id="exam-date">2025/04/10</span>
+                            </div>
+
+                            <div class="info-item">
+                                <label>時間：</label>
+                                <span id="exam-time">10:00-11:30</span>
+                            </div>
+
+                            <div class="info-item">
+                                <label>地點：</label>
+                                <span id="exam-location">資訊大樓301教室</span>
+                            </div>
+
+                            <div class="info-item full-width">
+                                <label>考試說明：</label>
+                                <div id="exam-description" class="description-box">
+                                    本次考試涵蓋第1-8週課程內容，包括C語言基礎語法、變數與運算式、條件判斷、循環結構、函數、陣列與指標等內容。考試為閉卷考試，僅允許攜帶藍色或黑色原子筆、鉛筆和橡皮擦。
+                                </div>
+                            </div>
                         </div>
-                        <div class="tab-content" id="questions-content">
-                            <!-- 試題管理內容 -->
+
+                        <!-- 試題管理標籤內容 -->
+                        <div class="tab-content" id="questions-tab">
+                            <div class="question-controls">
+                                <button id="add-question-btn" class="button">新增試題</button>
+                                <button id="ai-generate-btn" class="button button-ai">AI生成試題</button>
+                            </div>
+
+                            <div class="question-list">
+                                <!-- 選擇題 -->
+                                <div class="question-group">
+                                    <h3>選擇題（每題5分，共50分）</h3>
+
+                                    <div class="question-item">
+                                        <div class="question-header">
+                                            <span class="question-number">1</span>
+                                            <div class="question-actions">
+                                                <button class="button-small">編輯</button>
+                                                <button class="button-small button-danger">刪除</button>
+                                            </div>
+                                        </div>
+                                        <div class="question-content">
+                                            <p>以下哪個不是C語言的基本資料型態？</p>
+                                            <div class="options">
+                                                <div class="option">A. int</div>
+                                                <div class="option">B. float</div>
+                                                <div class="option correct">C. string</div>
+                                                <div class="option">D. char</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 程式題 -->
+                                <div class="question-group">
+                                    <h3>程式題（每題25分，共50分）</h3>
+
+                                    <div class="question-item">
+                                        <div class="question-header">
+                                            <span class="question-number">1</span>
+                                            <div class="question-actions">
+                                                <button class="button-small">編輯</button>
+                                                <button class="button-small button-danger">刪除</button>
+                                            </div>
+                                        </div>
+                                        <div class="question-content">
+                                            <p>撰寫一個函數 calculateFactorial(int n)，用於計算 n 的階乘。</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="tab-content" id="results-content">
-                            <!-- 成績統計內容 -->
+
+                        <!-- 學生狀態標籤內容 -->
+                        <div class="tab-content" id="students-tab">
+                            <table class="student-table">
+                                <thead>
+                                    <tr>
+                                        <th>學號</th>
+                                        <th>姓名</th>
+                                        <th>狀態</th>
+                                        <th>分數</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>S10911001</td>
+                                        <td>陳小明</td>
+                                        <td><span class="status-pending">等待考試</span></td>
+                                        <td>-</td>
+                                        <td>
+                                            <button class="button-small" disabled>查看</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>S10911002</td>
+                                        <td>林雅婷</td>
+                                        <td><span class="status-pending">等待考試</span></td>
+                                        <td>-</td>
+                                        <td>
+                                            <button class="button-small" disabled>查看</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -118,16 +217,176 @@
 
     <!-- 新增/編輯考試模態視窗 -->
     <div id="exam-modal" class="modal">
-        <!-- 新增/編輯考試的表單 -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>新增考試</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="exam-form">
+                    <div class="form-group">
+                        <label for="modal-exam-title">考試名稱：</label>
+                        <input type="text" id="modal-exam-title" class="form-control" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="modal-exam-course">所屬課程：</label>
+                            <select id="modal-exam-course" class="form-control" required>
+                                <option value="">請選擇</option>
+                                <option value="programming">程式設計</option>
+                                <option value="datastructure">資料結構</option>
+                                <option value="database">資料庫系統</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-exam-type">考試類型：</label>
+                            <select id="modal-exam-type" class="form-control" required>
+                                <option value="">請選擇</option>
+                                <option value="midterm">期中考</option>
+                                <option value="final">期末考</option>
+                                <option value="quiz">小考</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="modal-exam-date">考試日期：</label>
+                            <input type="date" id="modal-exam-date" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-exam-time">開始時間：</label>
+                            <input type="time" id="modal-exam-time" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-exam-duration">時長（分鐘）：</label>
+                            <input type="number" id="modal-exam-duration" class="form-control" min="10" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modal-exam-location">考試地點：</label>
+                        <input type="text" id="modal-exam-location" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modal-exam-description">考試說明：</label>
+                        <textarea id="modal-exam-description" class="form-control" rows="4" required></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="button">儲存</button>
+                        <button type="button" class="button button-secondary" id="cancel-exam-btn">取消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
-    <!-- 上傳試題檔案模態視窗 -->
-    <div id="upload-question-modal" class="modal">
-        <!-- 上傳試題檔案的表單 -->
+    <!-- AI生成試題模態視窗 -->
+    <div id="ai-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>AI輔助生成試題</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="ai-question-type">題型：</label>
+                    <select id="ai-question-type" class="form-control">
+                        <option value="all">所有題型</option>
+                        <option value="multiple-choice">選擇題</option>
+                        <option value="coding">程式題</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="ai-question-count">題目數量：</label>
+                    <input type="number" id="ai-question-count" class="form-control" min="1" max="10" value="5">
+                </div>
+
+                <div class="form-group">
+                    <label for="ai-topics">主題或知識點（用逗號分隔）：</label>
+                    <input type="text" id="ai-topics" class="form-control" placeholder="例：變數宣告, 條件判斷, 迴圈, 函數">
+                </div>
+
+                <div class="form-actions">
+                    <button id="generate-btn" class="button button-ai">開始生成</button>
+                    <button id="cancel-generate-btn" class="button button-secondary">取消</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- JavaScript 引入 -->
-    <script src="../teacher-dashboard.js"></script>
+    <!-- 新增試題模態視窗 -->
+    <div id="question-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>新增試題</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="question-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="question-type">題型：</label>
+                            <select id="question-type" class="form-control" required>
+                                <option value="">請選擇</option>
+                                <option value="multiple-choice">選擇題</option>
+                                <option value="coding">程式題</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="question-score">分數：</label>
+                            <input type="number" id="question-score" class="form-control" min="0" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="question-content">題目內容：</label>
+                        <textarea id="question-content" class="form-control" rows="4" required></textarea>
+                    </div>
+
+                    <!-- 選擇題選項 -->
+                    <div id="multiple-choice-options" style="display:none;">
+                        <h3>選項</h3>
+                        <div id="options-container">
+                            <div class="option-row">
+                                <input type="radio" name="correct-option" value="0" required>
+                                <input type="text" class="form-control" placeholder="選項內容" required>
+                            </div>
+                            <div class="option-row">
+                                <input type="radio" name="correct-option" value="1" required>
+                                <input type="text" class="form-control" placeholder="選項內容" required>
+                            </div>
+                            <div class="option-row">
+                                <input type="radio" name="correct-option" value="2" required>
+                                <input type="text" class="form-control" placeholder="選項內容" required>
+                            </div>
+                            <div class="option-row">
+                                <input type="radio" name="correct-option" value="3" required>
+                                <input type="text" class="form-control" placeholder="選項內容" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 程式題答案 -->
+                    <div id="coding-options" style="display:none;">
+                        <h3>參考解答</h3>
+                        <textarea id="coding-answer" class="form-control code-editor" rows="8" placeholder="輸入參考解答程式碼"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" id="save-question-btn" class="button">儲存</button>
+                        <button type="button" id="ai-assist-btn" class="button button-ai">AI輔助</button>
+                        <button type="button" id="cancel-question-btn" class="button button-secondary">取消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="exam-management.js"></script>
 </body>
 

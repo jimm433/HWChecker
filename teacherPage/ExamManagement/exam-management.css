@@ -1,22 +1,75 @@
-/* 考試管理系統樣式 */
+/* 簡化版考試管理系統樣式 */
 
 
-/* 主要佈局 */
+/* 基本表單元素 */
 
-.exam-management-section {
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+
+/* 主要布局 */
+
+.exam-section {
     display: grid;
-    grid-template-columns: 350px 1fr;
+    grid-template-columns: 300px 1fr;
     gap: 20px;
-    margin-bottom: 20px;
 }
 
 
-/* 考試列表卡片 */
+/* 卡片樣式 */
 
-.exam-list-card {
-    max-height: calc(100vh - 150px);
-    overflow-y: auto;
+.card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
+
+.card-header {
+    background-color: #3498db;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.card-content {
+    padding: 15px;
+}
+
+
+/* 考試列表 */
 
 .exam-list {
     list-style: none;
@@ -25,10 +78,11 @@
 }
 
 .exam-item {
-    padding: 15px;
+    display: flex;
+    align-items: center;
+    padding: 12px;
     border-bottom: 1px solid #eee;
     cursor: pointer;
-    transition: background-color 0.2s;
 }
 
 .exam-item:hover {
@@ -36,89 +90,63 @@
 }
 
 .exam-item.active {
-    background-color: #e6f3ff;
+    background-color: #e6f7ff;
     border-left: 3px solid #3498db;
 }
 
-.exam-item-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-}
-
-.exam-course {
-    color: #2c3e50;
-    font-weight: 600;
-}
-
-.exam-type {
-    background-color: #f0f5ff;
-    color: #3498db;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-size: 0.8rem;
-}
-
-.exam-details {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.85rem;
-    color: #7f8c8d;
-}
-
 .exam-status {
-    font-weight: 600;
-}
-
-.exam-status.active {
-    color: #2ecc71;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 10px;
 }
 
 .exam-status.upcoming {
-    color: #3498db;
+    background-color: #3498db;
 }
 
-.exam-status.past {
-    color: #95a5a6;
+.exam-status.active {
+    background-color: #2ecc71;
+}
+
+.exam-status.ended {
+    background-color: #95a5a6;
+}
+
+.exam-status.draft {
+    background-color: #f39c12;
+}
+
+.exam-info {
+    flex: 1;
+}
+
+.exam-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.exam-date {
+    font-size: 0.85rem;
+    color: #666;
 }
 
 
-/* 考試詳情卡片 */
+/* 標籤樣式 */
 
-.exam-detail-card {
-    max-height: calc(100vh - 150px);
-    overflow-y: auto;
-}
-
-.exam-detail-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 20px;
-}
-
-.exam-title h2 {
-    margin: 0;
-    margin-bottom: 10px;
-    color: #2c3e50;
-}
-
-
-/* 考試分頁標籤 */
-
-.exam-tabs {
+.tabs {
     display: flex;
     border-bottom: 1px solid #ddd;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .tab {
-    padding: 10px 20px;
+    padding: 8px 15px;
     cursor: pointer;
     border-bottom: 3px solid transparent;
     margin-right: 5px;
     font-weight: 600;
-    color: #7f8c8d;
+    color: #666;
 }
 
 .tab:hover {
@@ -139,194 +167,316 @@
 }
 
 
-/* 題目庫樣式 */
+/* 基本信息樣式 */
 
-.question-bank-controls {
+.info-group {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin-bottom: 20px;
 }
 
-.ai-question-generation {
-    display: flex;
-    gap: 10px;
-    align-items: center;
+.info-group h2 {
+    margin: 0;
+    color: #333;
 }
 
-.question-list {
+.info-item {
+    margin-bottom: 10px;
     display: flex;
-    flex-direction: column;
-    gap: 15px;
 }
 
-.question-item {
-    background-color: #f8f9fa;
-    border-radius: 6px;
-    padding: 15px;
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
-}
-
-.question-type {
+.info-item label {
+    font-weight: 600;
     width: 80px;
-    padding: 5px;
-    text-align: center;
+    flex-shrink: 0;
+}
+
+.info-item.full-width {
+    display: block;
+}
+
+.description-box {
+    background-color: #f8f9fa;
+    padding: 10px;
     border-radius: 4px;
-    font-size: 0.8rem;
+    margin-top: 5px;
+    line-height: 1.5;
+}
+
+
+/* 狀態徽章 */
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
     font-weight: 600;
 }
 
-.question-type.choice {
-    background-color: #e3f2fd;
-    color: #2196f3;
+.status-badge.upcoming {
+    background-color: #e1f0fa;
+    color: #3498db;
 }
 
-.question-type.programming {
-    background-color: #e8f5e9;
-    color: #4caf50;
+.status-badge.active {
+    background-color: #e1f7e3;
+    color: #2ecc71;
 }
 
-.question-type.short-answer {
-    background-color: #fff3e0;
-    color: #ff9800;
+.status-badge.ended {
+    background-color: #f0f0f0;
+    color: #95a5a6;
 }
 
-.question-content {
-    flex: 1;
+.status-badge.draft {
+    background-color: #fef5e7;
+    color: #f39c12;
+}
+
+
+/* 試題管理樣式 */
+
+.question-controls {
+    margin-bottom: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.question-group {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.question-group h3 {
+    padding: 10px;
+    margin: 0;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eee;
+    font-size: 1rem;
+}
+
+.question-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.question-item:last-child {
+    border-bottom: none;
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.question-number {
+    font-weight: 600;
+    color: #3498db;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e1f0fa;
+    border-radius: 50%;
 }
 
 .question-actions {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    gap: 5px;
 }
 
-
-/* 考試題目樣式 */
-
-.exam-questions-controls {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
+.question-content p {
+    margin-top: 0;
+    margin-bottom: 10px;
 }
 
-.exam-question-list {
+.options {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 5px;
 }
 
-.exam-question-item {
-    background-color: #f8f9fa;
-    border-radius: 6px;
-    padding: 15px;
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
-}
-
-.question-details {
-    flex: 1;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.question-score {
-    background-color: #3498db;
-    color: white;
+.option {
     padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 0.9rem;
-}
-
-
-/* 成績查看樣式 */
-
-.exam-results-controls {
-    margin-bottom: 20px;
-}
-
-.results-summary {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 20px;
-}
-
-.stats-card {
     background-color: #f8f9fa;
-    border-radius: 6px;
-    padding: 15px;
-    text-align: center;
-    flex: 1;
+    border-radius: 4px;
 }
 
-.stats-card h4 {
-    margin: 0 0 10px;
-    color: #7f8c8d;
-}
-
-.stats-card p {
-    margin: 0;
-    font-size: 1.5rem;
+.option.correct {
+    background-color: #e1f7e3;
+    color: #2ecc71;
     font-weight: 600;
-    color: #2c3e50;
 }
 
-.student-results-table {
-    overflow-x: auto;
-}
 
-.student-results-table table {
+/* 學生表格樣式 */
+
+.student-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.student-results-table th,
-.student-results-table td {
-    padding: 12px 15px;
+.student-table th,
+.student-table td {
+    padding: 10px;
     text-align: left;
     border-bottom: 1px solid #eee;
 }
 
-.student-results-table th {
+.student-table th {
     background-color: #f8f9fa;
-    color: #2c3e50;
     font-weight: 600;
 }
 
-.status {
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 0.9rem;
-}
-
-.status.pass {
-    background-color: #e8f5e9;
-    color: #2ecc71;
-}
-
-.status.fail {
-    background-color: #f8eae9;
-    color: #e74c3c;
+.status-pending {
+    color: #f39c12;
 }
 
 
-/* 題目模態視窗的選項樣式 */
+/* 模態視窗樣式 */
 
-.choice-option {
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 10% auto;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    background-color: #3498db;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 8px 8px 0 0;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.close-modal {
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal-body {
+    padding: 15px;
+}
+
+
+/* 選項行樣式 */
+
+.option-row {
     display: flex;
     align-items: center;
     gap: 10px;
     margin-bottom: 10px;
 }
 
-.choice-option .choice-option-text {
+.option-row .form-control {
     flex: 1;
 }
 
-.choice-option .choice-option-correct {
-    width: 20px;
-    height: 20px;
+
+/* 代碼編輯器樣式 */
+
+.code-editor {
+    font-family: monospace;
+}
+
+
+/* 按鈕樣式 */
+
+.button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.button:hover {
+    background-color: #2980b9;
+}
+
+.button-small {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+}
+
+.button-secondary {
+    background-color: #95a5a6;
+}
+
+.button-secondary:hover {
+    background-color: #7f8c8d;
+}
+
+.button-danger {
+    background-color: #e74c3c;
+}
+
+.button-danger:hover {
+    background-color: #c0392b;
+}
+
+.button-ai {
+    background-color: #9b59b6;
+}
+
+.button-ai:hover {
+    background-color: #8e44ad;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+
+/* 響應式設計 */
+
+@media (max-width: 768px) {
+    .exam-section {
+        grid-template-columns: 1fr;
+    }
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    .form-actions {
+        flex-direction: column;
+    }
+    .button {
+        width: 100%;
+        margin-bottom: 5px;
+    }
 }
