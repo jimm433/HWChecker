@@ -749,7 +749,7 @@ ORDER BY course_count DESC;`
                     window.location.href = '../teacher-dashboard.html';
                     break;
                 case '課程管理':
-                    window.location.href = 'CourseManagementPage/course-management.html';
+                    window.location.href = '../CourseManagementPage/course-management.html';
                     break;
                 case '學生成績':
                     alert('學生成績頁面正在建設中');
@@ -758,7 +758,7 @@ ORDER BY course_count DESC;`
                     // 已在當前頁面
                     break;
                 case '考試管理':
-                    window.location.href = 'TeacherAssignmentPage/exam-management.html';
+                    window.location.href = '../ExamManagement/exam-management.html';
                     break;
                 case '教材上傳':
                     alert('教材上傳頁面正在建設中');
