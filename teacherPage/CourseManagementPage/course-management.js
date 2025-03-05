@@ -713,7 +713,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.href = '../TeacherAssignmentPage/assignment-grading.html';
                     break;
                 case '考試管理':
-                    window.location.href = 'TeacherAssignmentPage/exam-management.html';
+                    window.location.href = 'ExamManagement/exam-management.html';
                     break;
                 case '教材上傳':
                     alert('教材上傳頁面正在建設中');

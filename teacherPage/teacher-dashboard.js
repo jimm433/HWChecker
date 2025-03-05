@@ -36,8 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.href = 'TeacherAssignmentPage/assignment-grading.html';
                     break;
                 case '考試管理':
-                    // window.location.href = 'exams.html';
-                    alert('考試管理頁面正在建設中');
+                    window.location.href = 'ExamManagement/exam-management.html';
                     break;
                 case '教材上傳':
                     // window.location.href = 'materials.html';
