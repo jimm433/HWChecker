@@ -746,11 +746,10 @@ ORDER BY course_count DESC;`
             const page = this.textContent.trim();
             switch (page) {
                 case '儀表板':
-                    window.history.back(); // This goes back to the previous page in history
+                    window.location.href = '../teacher-dashboard.html';
                     break;
-                    // other cases...           
                 case '課程管理':
-                    alert('課程管理頁面正在建設中');
+                    window.location.href = 'CourseManagementPage/course-management.html';
                     break;
                 case '學生成績':
                     alert('學生成績頁面正在建設中');
@@ -759,7 +758,7 @@ ORDER BY course_count DESC;`
                     // 已在當前頁面
                     break;
                 case '考試管理':
-                    alert('考試管理頁面正在建設中');
+                    window.location.href = 'TeacherAssignmentPage/exam-management.html';
                     break;
                 case '教材上傳':
                     alert('教材上傳頁面正在建設中');
