@@ -1,6 +1,7 @@
 // server.js
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const { testConnection, pool } = require('./db');
 
 const app = express();
@@ -10,6 +11,9 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// 設置靜態文件服務 - 添加這行代碼
+app.use(express.static(path.join(__dirname, '../')));
 
 // 測試資料庫連接的路由
 app.get('/api/test-db', async(req, res) => {
@@ -80,10 +84,6 @@ app.post('/api/register/student', async(req, res) => {
                 message: '此學號已被註冊'
             });
         }
-
-        // 實際應用中應該對密碼進行加密
-        // 這裡為了簡化，暫時不做加密
-        // const hashedPassword = await bcrypt.hash(password, 10);
 
         // 新增學生記錄
         await pool.execute(
