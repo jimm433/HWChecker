@@ -35,8 +35,11 @@ exports.handler = async(event, context) => {
         // 解析請求體
         const { studentId, name, password } = JSON.parse(event.body);
 
+        console.log('接收到註冊請求:', { studentId, name }); // 添加日誌
+
         // 基本輸入驗證
         if (!studentId || !name || !password) {
+            console.log('輸入驗證失敗：缺少必要欄位');
             return {
                 statusCode: 400,
                 headers: corsHeaders,
@@ -49,6 +52,7 @@ exports.handler = async(event, context) => {
 
         // 密碼長度驗證
         if (password.length < 6) {
+            console.log('密碼長度不足');
             return {
                 statusCode: 400,
                 headers: corsHeaders,
@@ -71,6 +75,8 @@ exports.handler = async(event, context) => {
         try {
             // 連接到數據庫
             await client.connect();
+            console.log('成功連接到 MongoDB');
+
             const db = client.db("school_system");
             const studentsCollection = db.collection('students');
 
@@ -78,6 +84,7 @@ exports.handler = async(event, context) => {
             const existingStudent = await studentsCollection.findOne({ student_id: studentId });
 
             if (existingStudent) {
+                console.log('學號已存在:', studentId);
                 return {
                     statusCode: 400,
                     headers: corsHeaders,
@@ -89,7 +96,7 @@ exports.handler = async(event, context) => {
             }
 
             // 創建新學生
-            await studentsCollection.insertOne({
+            const result = await studentsCollection.insertOne({
                 student_id: studentId,
                 name,
                 password,
@@ -97,21 +104,36 @@ exports.handler = async(event, context) => {
                 year: 1
             });
 
+            console.log('成功插入學生資料:', result);
+
             // 註冊成功
             return {
                 statusCode: 201,
                 headers: corsHeaders,
                 body: JSON.stringify({
                     success: true,
-                    message: '註冊成功'
+                    message: '註冊成功',
+                    insertedId: result.insertedId
+                })
+            };
+        } catch (dbError) {
+            console.error('數據庫操作錯誤:', dbError);
+            return {
+                statusCode: 500,
+                headers: corsHeaders,
+                body: JSON.stringify({
+                    success: false,
+                    message: '數據庫操作失敗',
+                    error: dbError.message
                 })
             };
         } finally {
             // 確保關閉數據庫連接
             await client.close();
+            console.log('已關閉 MongoDB 連接');
         }
     } catch (err) {
-        console.error('註冊錯誤詳情:', err);
+        console.error('註冊過程中發生錯誤:', err);
         return {
             statusCode: 500,
             headers: corsHeaders,
