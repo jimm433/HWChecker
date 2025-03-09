@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // 5. 修改後的登入函式 (連接 Netlify Functions)
+    // 5. 修改後的登入函式 (連接 API)
     function loginUser(formElement, role) {
         clearError(formElement);
 
@@ -48,16 +48,20 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // 發送 API 請求到 Netlify Functions
-        fetch('/.netlify/functions/api/login', {
+        // 發送 API 請求到 API 端點 (使用相對路徑)
+        fetch('/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ userId, password, role })
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('API 回應狀態:', response.status);
+                return response.json();
+            })
             .then(data => {
+                console.log('API 回應數據:', data);
                 if (data.success) {
                     // 登入成功
                     localStorage.setItem('userId', data.user.id);

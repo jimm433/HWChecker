@@ -13,6 +13,15 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// 簡單測試端點
+app.get('/test', (req, res) => {
+    res.json({
+        success: true,
+        message: 'API 連接成功!',
+        timestamp: new Date().toISOString()
+    });
+});
+
 // 測試數據庫連接
 app.get('/test-db', async(req, res) => {
     try {
@@ -21,13 +30,18 @@ app.get('/test-db', async(req, res) => {
         res.json({ success: true, message: '數據庫連接成功' });
     } catch (err) {
         console.error('數據庫連接失敗:', err);
-        res.status(500).json({ success: false, message: '數據庫連接失敗' });
+        res.status(500).json({
+            success: false,
+            message: '數據庫連接失敗',
+            error: err.message
+        });
     }
 });
 
 // 登入 API
 app.post('/login', async(req, res) => {
     try {
+        console.log('收到登入請求:', req.body);
         const { userId, password, role } = req.body;
         const db = await connectToDatabase();
 
@@ -62,15 +76,31 @@ app.post('/login', async(req, res) => {
         });
     } catch (err) {
         console.error('登入錯誤:', err);
-        res.status(500).json({ success: false, message: '伺服器錯誤' });
+        res.status(500).json({
+            success: false,
+            message: '伺服器錯誤',
+            error: err.message
+        });
     }
 });
 
 // 學生註冊 API
 app.post('/register/student', async(req, res) => {
     try {
+        console.log('收到註冊請求:', req.body);
         const { studentId, name, password } = req.body;
+
+        // 基本輸入驗證
+        if (!studentId || !name || !password) {
+            return res.status(400).json({
+                success: false,
+                message: '必須提供學號、姓名和密碼'
+            });
+        }
+
         const db = await connectToDatabase();
+        console.log('數據庫連接成功，準備檢查學號');
+
         const studentsCollection = db.collection('students');
 
         // 檢查學生ID是否已經存在
@@ -83,6 +113,7 @@ app.post('/register/student', async(req, res) => {
             });
         }
 
+        console.log('學號檢查通過，準備創建新學生');
         // 創建新學生
         await studentsCollection.insertOne({
             student_id: studentId,
@@ -92,24 +123,27 @@ app.post('/register/student', async(req, res) => {
             year: 1
         });
 
+        console.log('學生創建成功');
         res.status(201).json({
             success: true,
             message: '註冊成功'
         });
     } catch (err) {
-        console.error('註冊錯誤:', err);
+        console.error('註冊錯誤詳情:', err);
         res.status(500).json({
             success: false,
-            message: '伺服器錯誤，請稍後再試'
+            message: '伺服器錯誤，請稍後再試',
+            error: err.message // 添加更多錯誤信息
         });
     }
 });
 
-// 導出處理函數
-module.exports.handler = serverless(app);
+// 添加初始測試數據 - 同時支持 GET 和 POST
+app.get('/init-db', initDb);
+app.post('/init-db', initDb);
 
-// 添加初始測試數據
-app.post('/init-db', async(req, res) => {
+// 抽取為獨立函數
+async function initDb(req, res) {
     try {
         const db = await connectToDatabase();
 
@@ -150,4 +184,7 @@ app.post('/init-db', async(req, res) => {
         console.error('初始化錯誤:', err);
         res.status(500).json({ success: false, message: '數據庫初始化失敗', error: err.message });
     }
-});
+}
+
+// 導出處理函數
+module.exports.handler = serverless(app);

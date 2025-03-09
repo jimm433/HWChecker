@@ -40,15 +40,19 @@ document.addEventListener('DOMContentLoaded', function() {
             password: password
         };
 
-        // 發送註冊請求到 Netlify Functions
-        // 嘗試直接使用完整路徑
-        fetch('/.netlify/functions/api/register/student', {
+        // 發送註冊請求到 API 端點 (使用相對路徑)
+        fetch('/api/register/student', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(registerData)
             })
-            .then(response => response.json())
+            .then(response => {
+                // 紀錄回應狀態
+                console.log('API 回應狀態:', response.status);
+                return response.json();
+            })
             .then(data => {
+                console.log('API 回應數據:', data);
                 if (data.success) {
                     // 註冊成功
                     showNotification('註冊成功！歡迎 ' + studentName + '！', 'success');
