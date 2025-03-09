@@ -1,11 +1,7 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
-// 建議使用環境變數來存儲連接字串，以下為範例
-// 在實際部署時，請在 Netlify 的環境變數設定中設定 MONGODB_URI
-// const uri = process.env.MONGODB_URI;
-
-// 現在暫時使用硬編碼的連接字串
-const uri = "mongodb+srv://jimm433:S9mEMxrTBqgjHWUd@hwhelperdb.t7cf1.mongodb.net/?retryWrites=true&w=majority&appName=HWhelperDB";
+// 使用環境變數來存取 MongoDB 連接字串
+const uri = process.env.MONGODB_URI;
 
 // 全域變數用來保存連接實例
 let client = null;
@@ -24,6 +20,7 @@ async function connectToDatabase() {
 
     try {
         console.log("嘗試連接到 MongoDB...");
+        console.log("使用環境變數連接字串");
 
         // 建立客戶端連接
         client = new MongoClient(uri, {
@@ -31,14 +28,7 @@ async function connectToDatabase() {
                 version: ServerApiVersion.v1,
                 strict: true,
                 deprecationErrors: true,
-            },
-            // 添加連接池選項，提高效能
-            maxPoolSize: 10,
-            minPoolSize: 5,
-            maxIdleTimeMS: 30000,
-            // 設定連接超時
-            connectTimeoutMS: 5000,
-            socketTimeoutMS: 30000
+            }
         });
 
         // 連接到資料庫
