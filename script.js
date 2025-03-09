@@ -1,24 +1,26 @@
 document.addEventListener('DOMContentLoaded', function() {
     // 1. 取得各種元素
-    const signInBtn = document.getElementById("signIn");
-    const signUpBtn = document.getElementById("signUp");
-    const studentForm = document.getElementById("form1");
-    const teacherForm = document.getElementById("form2");
-    const studentRegisterBtn = document.getElementById("studentRegisterBtn");
+    const signInBtn = document.getElementById("signIn"); // 教師登入面板切換按鈕
+    const signUpBtn = document.getElementById("signUp"); // 學生登入面板切換按鈕
+    const studentForm = document.getElementById("form1"); // 學生登入表單
+    const teacherForm = document.getElementById("form2"); // 教師登入表單
+    const studentRegisterBtn = document.getElementById("studentRegisterBtn"); // 學生註冊按鈕
     const container = document.querySelector(".container");
 
-    // 2. 表單切換顯示
+    // 2. 表單切換顯示 (原先就有的功能)
     signInBtn.addEventListener("click", () => {
+        // 點擊「教師登入」按鈕，移除右面板的樣式
         container.classList.remove("right-panel-active");
     });
 
     signUpBtn.addEventListener("click", () => {
+        // 點擊「學生登入」按鈕，加入右面板的樣式
         container.classList.add("right-panel-active");
     });
 
     // 3. 顯示與清除錯誤訊息
     function showError(message, formElement) {
-        clearError(formElement);
+        clearError(formElement); // 先清除舊錯誤
         const errorDiv = document.createElement('div');
         errorDiv.className = 'error-message';
         errorDiv.style.color = 'red';
@@ -34,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // 4. 登入函式
+    // 5. 修改後的登入函式 (連接 API)
     function loginUser(formElement, role) {
         clearError(formElement);
 
@@ -46,18 +48,32 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // 使用正確的 Netlify Functions 路徑
-        fetch('/.netlify/functions/api', {
+        // 顯示載入提示
+        const loadingMsg = document.createElement('div');
+        loadingMsg.textContent = '登入中...';
+        loadingMsg.style.color = 'blue';
+        loadingMsg.className = 'loading-message';
+        formElement.appendChild(loadingMsg);
+
+        // 確定API端點
+        let apiUrl = '';
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            // 本地開發環境
+            apiUrl = 'http://localhost:8888/.netlify/functions/api/login';
+        } else {
+            // 生產環境
+            apiUrl = '/.netlify/functions/api/login';
+        }
+
+        console.log('嘗試連接到API端點:', apiUrl);
+
+        // 發送API請求
+        fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    action: 'login',
-                    userId,
-                    password,
-                    role
-                })
+                body: JSON.stringify({ userId, password, role })
             })
             .then(response => {
                 console.log('API 回應狀態:', response.status);
@@ -65,6 +81,11 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(data => {
                 console.log('API 回應數據:', data);
+
+                // 移除載入提示
+                const loadingElement = formElement.querySelector('.loading-message');
+                if (loadingElement) loadingElement.remove();
+
                 if (data.success) {
                     // 登入成功
                     localStorage.setItem('userId', data.user.id);
@@ -84,22 +105,28 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error('登入錯誤:', error);
+
+                // 移除載入提示
+                const loadingElement = formElement.querySelector('.loading-message');
+                if (loadingElement) loadingElement.remove();
+
                 showError('伺服器連接錯誤，請稍後再試', formElement);
             });
     }
 
-    // 5. 事件監聽器
+    // 6. 學生登入事件
     studentForm.addEventListener('submit', function(e) {
         e.preventDefault();
         loginUser(studentForm, 'student');
     });
 
+    // 7. 教師登入事件
     teacherForm.addEventListener('submit', function(e) {
         e.preventDefault();
         loginUser(teacherForm, 'teacher');
     });
 
-    // 6. 學生註冊按鈕事件
+    // 8. 學生註冊按鈕事件
     studentRegisterBtn.addEventListener("click", () => {
         window.location.href = 'studentRegister/student-register.html';
     });
