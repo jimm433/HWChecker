@@ -33,7 +33,8 @@ app.post('/login', async(req, res) => {
 
         // 查詢用戶
         const user = await collection.findOne({
-            [idField]: userId });
+            [idField]: userId
+        });
 
         if (!user) {
             return res.status(401).json({ success: false, message: '帳號或密碼錯誤' });
@@ -102,3 +103,47 @@ app.post('/register/student', async(req, res) => {
 
 // 導出處理函數
 module.exports.handler = serverless(app);
+
+// 添加初始測試數據
+app.post('/init-db', async(req, res) => {
+    try {
+        const db = await connectToDatabase();
+
+        // 創建集合
+        if (!(await db.listCollections({ name: 'students' }).hasNext())) {
+            await db.createCollection('students');
+        }
+        if (!(await db.listCollections({ name: 'teachers' }).hasNext())) {
+            await db.createCollection('teachers');
+        }
+
+        // 添加測試教師
+        const teachersCollection = db.collection('teachers');
+
+        // 確認不重複添加數據
+        const teacherExists = await teachersCollection.findOne({ teacher_id: 'teacher' });
+        if (!teacherExists) {
+            await teachersCollection.insertMany([
+                { teacher_id: 'teacher', name: '王老師', password: 'teacher', department: '資訊工程學系' },
+                { teacher_id: 'teacher1', name: '李教授', password: '123456', department: '資訊工程學系' },
+                { teacher_id: 'admin', name: '系統管理員', password: 'admin', department: '資訊工程學系' }
+            ]);
+        }
+
+        // 添加測試學生
+        const studentsCollection = db.collection('students');
+        const studentExists = await studentsCollection.findOne({ student_id: 'student' });
+        if (!studentExists) {
+            await studentsCollection.insertMany([
+                { student_id: 'student', name: '張小明', password: 'student', department: '資訊工程學系', year: 2 },
+                { student_id: 'student1', name: '王小華', password: '123456', department: '資訊工程學系', year: 2 },
+                { student_id: 'test', name: '測試學生', password: 'test', department: '資訊工程學系', year: 3 }
+            ]);
+        }
+
+        res.json({ success: true, message: '數據庫初始化成功' });
+    } catch (err) {
+        console.error('初始化錯誤:', err);
+        res.status(500).json({ success: false, message: '數據庫初始化失敗', error: err.message });
+    }
+});
