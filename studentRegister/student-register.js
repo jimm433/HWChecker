@@ -41,11 +41,10 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         // 發送註冊請求到 Netlify Functions
+        // 嘗試直接使用完整路徑
         fetch('/.netlify/functions/api/register/student', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(registerData)
             })
             .then(response => response.json())
