@@ -48,8 +48,27 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // 發送 API 請求到 API 端點 (使用相對路徑)
-        fetch('/api/login', {
+        // 顯示載入提示
+        const loadingMsg = document.createElement('div');
+        loadingMsg.textContent = '登入中...';
+        loadingMsg.style.color = 'blue';
+        loadingMsg.className = 'loading-message';
+        formElement.appendChild(loadingMsg);
+
+        // 確定API端點
+        let apiUrl = '';
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            // 本地開發環境
+            apiUrl = 'http://localhost:8888/.netlify/functions/api/login';
+        } else {
+            // 生產環境
+            apiUrl = '/.netlify/functions/api/login';
+        }
+
+        console.log('嘗試連接到API端點:', apiUrl);
+
+        // 發送API請求
+        fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -62,6 +81,11 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(data => {
                 console.log('API 回應數據:', data);
+
+                // 移除載入提示
+                const loadingElement = formElement.querySelector('.loading-message');
+                if (loadingElement) loadingElement.remove();
+
                 if (data.success) {
                     // 登入成功
                     localStorage.setItem('userId', data.user.id);
@@ -81,6 +105,11 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error('登入錯誤:', error);
+
+                // 移除載入提示
+                const loadingElement = formElement.querySelector('.loading-message');
+                if (loadingElement) loadingElement.remove();
+
                 showError('伺服器連接錯誤，請稍後再試', formElement);
             });
     }
