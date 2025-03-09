@@ -1,87 +1,125 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('studentRegisterForm');
-    const notification = document.getElementById('notification');
+const { MongoClient, ServerApiVersion } = require('mongodb');
 
-    // 實現返回登入頁面的功能
-    document.getElementById('loginLink').addEventListener('click', function(e) {
-        e.preventDefault();
-        window.location.href = '../index.html';
-    });
+const uri = "mongodb+srv://jimm433:S9mEMxrTBqgjHWUd@hwhelperdb.t7cf1.mongodb.net/?retryWrites=true&w=majority&appName=HWhelperDB";
 
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
+// CORS 配置
+const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type'
+};
 
-        // 獲取表單數據
-        const studentId = document.getElementById('newStudentId').value.trim();
-        const studentName = document.getElementById('newStudentName').value.trim();
-        const password = document.getElementById('newStudentPassword').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-
-        // 基本表單驗證
-        if (!studentId || !studentName || !password) {
-            showNotification('請填寫所有必填欄位', 'error');
-            return;
-        }
-
-        if (password !== confirmPassword) {
-            showNotification('密碼與確認密碼不符', 'error');
-            return;
-        }
-
-        if (password.length < 6) {
-            showNotification('密碼長度至少需要6個字符', 'error');
-            return;
-        }
-
-        // 準備要發送到API的數據
-        const registerData = {
-            studentId: studentId,
-            name: studentName,
-            password: password
+exports.handler = async(event, context) => {
+    // 處理 OPTIONS 預檢請求
+    if (event.httpMethod === 'OPTIONS') {
+        return {
+            statusCode: 200,
+            headers: corsHeaders,
+            body: ''
         };
-
-        // 發送註冊請求到 API 端點 (使用相對路徑)
-        fetch('/.netlify/functions/api/register/student', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(registerData)
-            })
-            .then(response => {
-                // 紀錄回應狀態
-                console.log('API 回應狀態:', response.status);
-                return response.json();
-            })
-            .then(data => {
-                console.log('API 回應數據:', data);
-                if (data.success) {
-                    // 註冊成功
-                    showNotification('註冊成功！歡迎 ' + studentName + '！', 'success');
-                    form.reset();
-
-                    // 2秒後跳轉到登入頁面
-                    setTimeout(function() {
-                        window.location.href = '../index.html';
-                    }, 2000);
-                } else {
-                    // 註冊失敗
-                    showNotification(data.message || '註冊失敗，請稍後再試', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('註冊錯誤:', error);
-                showNotification('伺服器連接錯誤，請稍後再試', 'error');
-            });
-    });
-
-    // 顯示通知函數
-    function showNotification(message, type) {
-        notification.textContent = message;
-        notification.className = 'notification ' + type;
-        notification.style.display = 'block';
-
-        // 5秒後自動隱藏通知
-        setTimeout(function() {
-            notification.style.display = 'none';
-        }, 5000);
     }
-});
+
+    // 只處理 POST 請求
+    if (event.httpMethod !== 'POST') {
+        return {
+            statusCode: 405,
+            headers: corsHeaders,
+            body: JSON.stringify({
+                success: false,
+                message: '方法不被允許'
+            })
+        };
+    }
+
+    try {
+        // 解析請求體
+        const { studentId, name, password } = JSON.parse(event.body);
+
+        // 基本輸入驗證
+        if (!studentId || !name || !password) {
+            return {
+                statusCode: 400,
+                headers: corsHeaders,
+                body: JSON.stringify({
+                    success: false,
+                    message: '必須提供學號、姓名和密碼'
+                })
+            };
+        }
+
+        // 密碼長度驗證
+        if (password.length < 6) {
+            return {
+                statusCode: 400,
+                headers: corsHeaders,
+                body: JSON.stringify({
+                    success: false,
+                    message: '密碼長度至少需要6個字符'
+                })
+            };
+        }
+
+        // 創建 MongoDB 客戶端
+        const client = new MongoClient(uri, {
+            serverApi: {
+                version: ServerApiVersion.v1,
+                strict: true,
+                deprecationErrors: true,
+            }
+        });
+
+        try {
+            // 連接到數據庫
+            await client.connect();
+            const db = client.db("school_system");
+            const studentsCollection = db.collection('students');
+
+            // 檢查學生ID是否已經存在
+            const existingStudent = await studentsCollection.findOne({ student_id: studentId });
+
+            if (existingStudent) {
+                return {
+                    statusCode: 400,
+                    headers: corsHeaders,
+                    body: JSON.stringify({
+                        success: false,
+                        message: '此學號已被註冊'
+                    })
+                };
+            }
+
+            // 創建新學生
+            await studentsCollection.insertOne({
+                student_id: studentId,
+                name,
+                password,
+                department: '資訊工程學系',
+                year: 1
+            });
+
+            // 註冊成功
+            return {
+                statusCode: 201,
+                headers: corsHeaders,
+                body: JSON.stringify({
+                    success: true,
+                    message: '註冊成功'
+                })
+            };
+        } finally {
+            // 確保關閉數據庫連接
+            await client.close();
+        }
+    } catch (err) {
+        console.error('註冊錯誤詳情:', err);
+        return {
+            statusCode: 500,
+            headers: corsHeaders,
+            body: JSON.stringify({
+                success: false,
+                message: '伺服器錯誤，請稍後再試',
+                error: err.message
+            })
+        };
+    }
+};
