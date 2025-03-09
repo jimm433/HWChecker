@@ -23,4 +23,18 @@ async function connectToDatabase() {
     return dbConnection;
 }
 
+app.post('/register/student', async(req, res) => {
+    try {
+        console.log('收到註冊請求:', req.body);
+        // 其餘代碼...
+    } catch (err) {
+        console.error('註冊錯誤詳情:', err);
+        res.status(500).json({
+            success: false,
+            message: '伺服器錯誤，請稍後再試',
+            error: err.message // 添加這行以提供更多錯誤信息
+        });
+    }
+});
+
 module.exports = { connectToDatabase };

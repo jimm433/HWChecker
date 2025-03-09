@@ -1,5 +1,5 @@
 [build]
-  publish = "public"
+  publish = "."  # 使用根目錄作為發布目錄，而不是 public
   functions = "netlify/functions"
 
 [[redirects]]

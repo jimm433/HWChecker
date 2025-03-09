@@ -6,7 +6,11 @@ const cors = require('cors');
 const app = express();
 
 // 中間件
-app.use(cors());
+app.use(cors({
+    origin: '*', // 允許所有來源，開發時可用，生產環境應該更嚴格
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
+}));
 app.use(express.json());
 
 // 測試數據庫連接

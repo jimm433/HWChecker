@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // 發送 API 請求到 Netlify Functions
-        fetch('/api/login', {
+        fetch('/.netlify/functions/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

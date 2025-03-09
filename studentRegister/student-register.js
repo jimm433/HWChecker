@@ -40,8 +40,8 @@ document.addEventListener('DOMContentLoaded', function() {
             password: password
         };
 
-        // 發送註冊請求到後端API
-        fetch('http://localhost:3000/api/register/student', {
+        // 發送註冊請求到 Netlify Functions
+        fetch('/.netlify/functions/api/register/student', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
