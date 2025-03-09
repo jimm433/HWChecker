@@ -36,21 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // 4. 硬編碼測試帳號 (用於前端測試)
-    const testAccounts = {
-        teachers: [
-            { userId: "teacher", password: "teacher", role: "teacher" },
-            { userId: "teacher1", password: "123456", role: "teacher" },
-            { userId: "admin", password: "admin", role: "teacher" }
-        ],
-        students: [
-            { userId: "student", password: "student", role: "student" },
-            { userId: "student1", password: "123456", role: "student" },
-            { userId: "test", password: "test", role: "student" }
-        ]
-    };
-
-    // 5. 修改後的登入函式 (不需要後端)
+    // 5. 修改後的登入函式 (連接後端API)
     function loginUser(formElement, role) {
         clearError(formElement);
 
@@ -62,31 +48,37 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // 根據角色選擇相應的帳號列表
-        const accountList = role === 'student' ? testAccounts.students : testAccounts.teachers;
+        // 發送 API 請求到你的伺服器
+        fetch('http://localhost:3000/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId, password, role })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // 登入成功
+                    localStorage.setItem('userId', data.user.id);
+                    localStorage.setItem('userRole', data.user.role);
+                    localStorage.setItem('userName', data.user.name);
 
-        // 查找匹配的帳號
-        const matchedAccount = accountList.find(account =>
-            account.userId === userId && account.password === password
-        );
-
-        if (matchedAccount) {
-            alert(`${role === 'student' ? '學生' : '教師'}登入成功！`);
-
-            // 模擬儲存 token
-            localStorage.setItem('token', 'test-token-' + matchedAccount.userId);
-            localStorage.setItem('userRole', matchedAccount.role);
-            localStorage.setItem('userId', matchedAccount.userId);
-
-            // 導向相應頁面
-            if (role === 'teacher') {
-                window.location.href = 'teacherPage/teacher-dashboard.html';
-            } else {
-                window.location.href = 'studentPage/student-dashboard.html';
-            }
-        } else {
-            showError('帳號或密碼錯誤', formElement);
-        }
+                    // 導向相應頁面
+                    if (role === 'teacher') {
+                        window.location.href = 'teacherPage/teacher-dashboard.html';
+                    } else {
+                        window.location.href = 'studentPage/student-dashboard.html';
+                    }
+                } else {
+                    // 登入失敗
+                    showError(data.message || '帳號或密碼錯誤', formElement);
+                }
+            })
+            .catch(error => {
+                console.error('登入錯誤:', error);
+                showError('伺服器連接錯誤，請稍後再試', formElement);
+            });
     }
 
     // 6. 學生登入事件
