@@ -39,27 +39,27 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 菜單項目點擊導航 - 修正跳轉路徑
-    const menuItems = document.querySelectorAll('.menu-item');
-    menuItems.forEach(item => {
-        item.addEventListener('click', function() {
-            const page = this.textContent.trim();
-            switch (page) {
-                case '作業':
-                    window.location.href = '../assignmentsPage/assignments.html';
-                    break;
-                case '考試':
-                    window.location.href = '../examsPage/exams.html';
-                    break;
-                case '成績':
-                    window.location.href = '../gradesPage/grades.html';
-                    break;
-                case '公告':
-                    window.location.href = '../announcementsPage/announcements.html';
-                    break;
-            }
-        });
+// 菜單項目點擊導航 - 修正跳轉路徑
+const menuItems = document.querySelectorAll('.menu-item');
+menuItems.forEach(item => {
+    item.addEventListener('click', function() {
+        const page = this.textContent.trim();
+        switch (page) {
+            case '作業':
+                window.location.href = 'assignmentsPage/assignments.html';
+                break;
+            case '考試':
+                window.location.href = 'examsPage/exams.html';
+                break;
+            case '成績':
+                window.location.href = 'gradesPage/grades.html';
+                break;
+            case '公告':
+                window.location.href = 'announcementsPage/announcements.html';
+                break;
+        }
     });
+});
     
     // 更新用戶資訊的函數
     function updateUserInfo(name) {
