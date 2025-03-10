@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>學生作業系統</title>
+    <link rel="stylesheet" type="text/css" href="../student-dashboard.css">
+    <link rel="stylesheet" type="text/css" href="assignments.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- 側邊欄 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>學生管理系統</h2>
+                <div class="student-info">
+                    <p>張小明</p>
+                    <p>資訊工程學系</p>
+                </div>
+            </div>
+            <ul class="menu">
+                <li class="menu-item active">作業</li>
+                <li class="menu-item">考試</li>
+                <li class="menu-item">成績</li>
+                <li class="menu-item">公告</li>
+            </ul>
+            <div class="logout">登出系統</div>
+        </div>
+
+        <!-- 主要內容區域 -->
+        <div class="main-content">
+            <div class="header">
+                <h1>作業系統</h1>
+            </div>
+
+            <!-- 作業概覽 -->
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <h3>總作業數</h3>
+                    <p id="total-assignments">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>未繳作業</h3>
+                    <p id="pending-assignments">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>已繳作業</h3>
+                    <p id="submitted-assignments">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>已批改</h3>
+                    <p id="graded-assignments">0</p>
+                </div>
+            </div>
+
+            <!-- 作業列表 -->
+            <div class="assignment-container">
+                <div class="tabs">
+                    <div class="tab active" data-tab="pending">待繳作業</div>
+                    <div class="tab" data-tab="submitted">已繳作業</div>
+                    <div class="tab" data-tab="graded">已批改作業</div>
+                </div>
+
+                <div class="tab-content active" id="pending-content">
+                    <div class="assignment-list" id="pending-list">
+                        <!-- 待繳作業列表將由 JavaScript 填入 -->
+                        <div class="empty-message">載入中...</div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="submitted-content">
+                    <div class="assignment-list" id="submitted-list">
+                        <!-- 已繳作業列表將由 JavaScript 填入 -->
+                        <div class="empty-message">載入中...</div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="graded-content">
+                    <div class="assignment-list" id="graded-list">
+                        <!-- 已批改作業列表將由 JavaScript 填入 -->
+                        <div class="empty-message">載入中...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 作業提交模態窗口 -->
+    <div id="submit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>提交作業</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="assignment-form">
+                    <input type="hidden" id="assignment-id">
+                    <div class="form-group">
+                        <label for="assignment-title">作業標題：</label>
+                        <div id="assignment-title" class="form-control-static"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="assignment-course">課程：</label>
+                        <div id="assignment-course" class="form-control-static"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="assignment-deadline">截止日期：</label>
+                        <div id="assignment-deadline" class="form-control-static"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="assignment-description">作業說明：</label>
+                        <div id="assignment-description" class="form-control-static"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="assignment-file">上傳檔案：</label>
+                        <input type="file" id="assignment-file" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="assignment-comment">備註說明：</label>
+                        <textarea id="assignment-comment" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="button">提交作業</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 查看作業詳情模態窗口 -->
+    <div id="detail-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>作業詳情</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>作業標題：</label>
+                    <div id="detail-title" class="form-control-static"></div>
+                </div>
+                <div class="form-group">
+                    <label>課程：</label>
+                    <div id="detail-course" class="form-control-static"></div>
+                </div>
+                <div class="form-group">
+                    <label>截止日期：</label>
+                    <div id="detail-deadline" class="form-control-static"></div>
+                </div>
+                <div class="form-group">
+                    <label>提交日期：</label>
+                    <div id="detail-submitted-date" class="form-control-static"></div>
+                </div>
+                <div class="form-group">
+                    <label>狀態：</label>
+                    <div id="detail-status" class="form-control-static"></div>
+                </div>
+                <div class="form-group">
+                    <label>教師評語：</label>
+                    <div id="detail-feedback" class="form-control-static"></div>
+                </div>
+                <div class="form-group">
+                    <label>分數：</label>
+                    <div id="detail-score" class="form-control-static"></div>
+                </div>
+                <div class="form-group">
+                    <label>已提交檔案：</label>
+                    <div id="detail-file" class="form-control-static">
+                        <a href="#" id="detail-file-link" target="_blank">下載檔案</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assignments.js"></script>
+</body>
+
+</html>
