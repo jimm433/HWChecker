@@ -35,7 +35,7 @@ body {
     margin-bottom: 10px;
 }
 
-.teacher-info {
+.student-info {
     font-size: 0.9rem;
     color: #bdc3c7;
 }
@@ -256,4 +256,19 @@ body {
 
 .button:hover {
     background-color: #2980b9;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+    }
+    
+    .content-cards {
+        grid-template-columns: 1fr;
+    }
 }

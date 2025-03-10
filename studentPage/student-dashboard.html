@@ -13,12 +13,13 @@
             <div class="sidebar-header">
                 <h2>學生管理系統</h2>
                 <div class="student-info">
-                    <p>張小明</p>
-                    <p>資訊工程學系</p>
+                    <p id="student-name">張小明</p>
+                    <p id="student-department">資訊工程學系</p>
                 </div>
             </div>
             <ul class="menu">
-                <li class="menu-item active">作業</li>
+                <li class="menu-item active">儀表板</li>
+                <li class="menu-item">作業</li>
                 <li class="menu-item">考試</li>
                 <li class="menu-item">成績</li>
                 <li class="menu-item">公告</li>
@@ -29,7 +30,7 @@
         <!-- 主要內容區域 -->
         <div class="main-content">
             <div class="header">
-                <h1>歡迎回來，張小明</h1>
+                <h1>歡迎回來，<span id="welcome-name">張小明</span></h1>
             </div>
 
             <!-- 課程總覽 -->
@@ -48,9 +49,9 @@
                 </div>
             </div>
 
-            <!-- 內容卡片 - 這部分會根據選單選擇動態變化 -->
+            <!-- 內容卡片 -->
             <div class="content-cards">
-                <!-- 作業內容 - 默認顯示 -->
+                <!-- 作業內容 -->
                 <div class="card">
                     <div class="card-header">
                         <h3>近期作業</h3>
@@ -74,10 +75,12 @@
                     </div>
                     <div class="card-content">
                         <div class="todo-item">
+                            <div class="todo-status"></div>
                             <div class="todo-info">演算法作業</div>
                             <div class="todo-deadline">截止日期：2025/03/05</div>
                         </div>
                         <div class="todo-item">
+                            <div class="todo-status"></div>
                             <div class="todo-info">資料庫作業</div>
                             <div class="todo-deadline">截止日期：2025/03/10</div>
                         </div>

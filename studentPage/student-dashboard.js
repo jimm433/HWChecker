@@ -24,6 +24,26 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             // 為點擊的項目添加active類
             this.classList.add('active');
+            
+            // 處理導航
+            const page = this.textContent.trim();
+            switch (page) {
+                case '儀表板':
+                    // 已在當前頁面，無需處理
+                    break;
+                case '作業':
+                    window.location.href = 'assignmentsPage/assignments.html';
+                    break;
+                case '考試':
+                    window.location.href = 'examsPage/exams.html';
+                    break;
+                case '成績':
+                    window.location.href = 'gradesPage/grades.html';
+                    break;
+                case '公告':
+                    window.location.href = 'announcementsPage/announcements.html';
+                    break;
+            }
         });
     });
 
@@ -35,48 +55,31 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.removeItem('userName');
             localStorage.removeItem('userRole');
             
-            window.location.href = '../index.html'; // 返回登入頁面，使用相對路徑
+            window.location.href = '../index.html'; // 返回登入頁面
         }
     });
-
-// 菜單項目點擊導航 - 修正跳轉路徑
-const menuItems = document.querySelectorAll('.menu-item');
-menuItems.forEach(item => {
-    item.addEventListener('click', function() {
-        const page = this.textContent.trim();
-        switch (page) {
-            case '作業':
-                window.location.href = 'assignmentsPage/assignments.html';
-                break;
-            case '考試':
-                window.location.href = 'examsPage/exams.html';
-                break;
-            case '成績':
-                window.location.href = 'gradesPage/grades.html';
-                break;
-            case '公告':
-                window.location.href = 'announcementsPage/announcements.html';
-                break;
-        }
-    });
-});
     
     // 更新用戶資訊的函數
     function updateUserInfo(name) {
         // 更新頁面標題中的學生姓名
-        const headerTitle = document.querySelector('.header h1');
-        if (headerTitle) {
-            headerTitle.textContent = `歡迎回來，${name}`;
+        const welcomeName = document.getElementById('welcome-name');
+        if (welcomeName) {
+            welcomeName.textContent = name;
         }
         
         // 更新側邊欄的學生資訊
-        const studentInfo = document.querySelector('.student-info');
-        if (studentInfo) {
-            // 假設第一個 p 元素是學生姓名
-            const nameParagraph = studentInfo.querySelector('p:first-child');
-            if (nameParagraph) {
-                nameParagraph.textContent = name;
-            }
+        const studentName = document.getElementById('student-name');
+        if (studentName) {
+            studentName.textContent = name;
         }
+    }
+    
+    // 載入其他數據
+    loadDashboardData();
+    
+    // 載入儀表板數據的函數
+    function loadDashboardData() {
+        // 這裡可以添加從後端API獲取數據的代碼
+        // 目前使用靜態數據
     }
 });
