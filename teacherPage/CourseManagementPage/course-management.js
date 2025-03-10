@@ -32,6 +32,35 @@ document.addEventListener('DOMContentLoaded', function() {
     const materialTypeFilter = document.getElementById('material-type-filter');
     const assignmentStatusFilter = document.getElementById('assignment-status-filter');
 
+    // 從 localStorage 讀取用戶資訊
+    const userId = localStorage.getItem('userId');
+    const userName = localStorage.getItem('userName');
+    const userRole = localStorage.getItem('userRole');
+
+    // 檢查是否已登入
+    if (!userId || !userName || userRole !== 'teacher') {
+        // 未登入或不是教師，重定向到登入頁面
+        alert('請先登入');
+        window.location.href = '../../index.html';
+        return;
+    }
+
+    // 更新頁面上的教師資訊
+    updateUserInfo(userName);
+
+    // 更新用戶資訊的函數
+function updateUserInfo(name) {
+    // 更新側邊欄的教師資訊
+    const teacherInfo = document.querySelector('.teacher-info');
+    if (teacherInfo) {
+        // 假設第一個 p 元素是教師姓名
+        const nameParagraph = teacherInfo.querySelector('p:first-child');
+        if (nameParagraph) {
+            nameParagraph.textContent = `${name} 教授`;
+        }
+    }
+}
+
     // 當前選中的課程ID
     let currentCourseId = 'programming';
 
@@ -725,10 +754,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 登出功能 (從teacher-dashboard.js)
-    document.querySelector('.logout').addEventListener('click', function() {
-        if (confirm('確定要登出嗎？')) {
-            window.location.href = '../../index.html';
-        }
-    });
+// 在登出函數中添加
+document.querySelector('.logout').addEventListener('click', function() {
+    if (confirm('確定要登出嗎？')) {
+        // 清除 localStorage 中的用戶資訊
+        localStorage.removeItem('userId');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userRole');
+        
+        window.location.href = '../../index.html';
+    }
+});
 });
