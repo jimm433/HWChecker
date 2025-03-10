@@ -39,23 +39,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 菜單項目點擊導航 - 改為跳轉到對應頁面
+    // 菜單項目點擊導航 - 修正跳轉路徑
     const menuItems = document.querySelectorAll('.menu-item');
     menuItems.forEach(item => {
         item.addEventListener('click', function() {
             const page = this.textContent.trim();
             switch (page) {
                 case '作業':
-                    window.location.href = 'assignments.html';
+                    window.location.href = '../assignmentsPage/assignments.html';
                     break;
                 case '考試':
-                    window.location.href = 'exams.html';
+                    window.location.href = '../examsPage/exams.html';
                     break;
                 case '成績':
-                    window.location.href = 'grades.html';
+                    window.location.href = '../gradesPage/grades.html';
                     break;
                 case '公告':
-                    window.location.href = 'announcements.html';
+                    window.location.href = '../announcementsPage/announcements.html';
                     break;
             }
         });
