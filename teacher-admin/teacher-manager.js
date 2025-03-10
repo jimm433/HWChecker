@@ -1,9 +1,10 @@
-// teacher-manager.js
+// teacher-manager.js 
+//記得先 npm install mongodb    
 const { MongoClient, ServerApiVersion } = require('mongodb');
+require('dotenv').config();
 
-// MongoDB 連線字串 (與你的 API 相同)
-const uri = "mongodb+srv://jimm433:S9mEMxrTBqgjHWUd@hwhelperdb.t7cf1.mongodb.net/?retryWrites=true&w=majority&appName=HWhelperDB";
-
+// MongoDB 連線字串 (來自環境變數)
+const uri = process.env.MONGODB_URI;
 // 連接到 MongoDB
 async function connectToMongoDB() {
   const client = new MongoClient(uri, {

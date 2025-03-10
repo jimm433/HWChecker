@@ -1,7 +1,7 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
+require('dotenv').config();
 
-const uri = "mongodb+srv://jimm433:S9mEMxrTBqgjHWUd@hwhelperdb.t7cf1.mongodb.net/?retryWrites=true&w=majority&appName=HWhelperDB";
-
+const uri = process.env.MONGODB_URI;
 // CORS 配置
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
