@@ -16,36 +16,36 @@ document.addEventListener('DOMContentLoaded', function() {
     updateUserInfo(userName);
     
     // 選單項目點擊事件
-    document.querySelectorAll('.menu-item').forEach(item => {
-        item.addEventListener('click', function() {
-            // 移除所有項目的active類
-            document.querySelectorAll('.menu-item').forEach(i => {
-                i.classList.remove('active');
-            });
-            // 為點擊的項目添加active類
-            this.classList.add('active');
-            
-            // 處理導航
-            const page = this.textContent.trim();
-            switch (page) {
-                case '儀表板':
-                    // 已在當前頁面，無需處理
-                    break;
-                case '作業':
-                    window.location.href = 'assignmentsPage/assignments.html';
-                    break;
-                case '考試':
-                    window.location.href = 'examsPage/exams.html';
-                    break;
-                case '成績':
-                    window.location.href = 'gradesPage/grades.html';
-                    break;
-                case '公告':
-                    window.location.href = 'announcementsPage/announcements.html';
-                    break;
-            }
+document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('click', function() {
+        // 移除所有項目的active類
+        document.querySelectorAll('.menu-item').forEach(i => {
+            i.classList.remove('active');
         });
+        // 為點擊的項目添加active類
+        this.classList.add('active');
+        
+        // 處理導航
+        const page = this.textContent.trim();
+        switch (page) {
+            case '儀表板':
+                // 已在當前頁面，無需處理
+                break;
+            case '作業':
+                window.location.href = 'assignmentsPage/assignments.html';
+                break;
+            case '考試':
+                window.location.href = 'examsPage/exams.html';
+                break;
+            case '成績':
+                window.location.href = 'gradesPage/grades.html';
+                break;
+            case '公告':
+                window.location.href = 'announcementsPage/announcements.html';
+                break;
+        }
     });
+});
 
     // 登出功能
     document.querySelector('.logout').addEventListener('click', function() {

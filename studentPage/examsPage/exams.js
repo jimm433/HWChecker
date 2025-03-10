@@ -76,35 +76,38 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // 側邊欄選單導航
-        document.querySelectorAll('.menu-item').forEach(item => {
-            item.addEventListener('click', function() {
-                const page = this.textContent.trim();
-                
-                // 先移除所有 active 類
-                document.querySelectorAll('.menu-item').forEach(menuItem => {
-                    menuItem.classList.remove('active');
-                });
-                
-                // 如果點擊的不是當前頁面，則導航到對應頁面
-                if (page !== '考試') {
-                    switch (page) {
-                        case '作業':
-                            window.location.href = '../assignmentsPage/assignments.html';
-                            break;
-                        case '成績':
-                            window.location.href = '../gradesPage/grades.html';
-                            break;
-                        case '公告':
-                            window.location.href = '../announcementsPage/announcements.html';
-                            break;
-                    }
-                } else {
-                    // 當前頁面，加上 active 類
-                    this.classList.add('active');
-                }
-            });
+// 側邊欄選單導航
+document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('click', function() {
+        const page = this.textContent.trim();
+        
+        // 先移除所有 active 類
+        document.querySelectorAll('.menu-item').forEach(menuItem => {
+            menuItem.classList.remove('active');
         });
+        
+        // 如果點擊的不是當前頁面，則導航到對應頁面
+        if (page !== '考試') {
+            switch (page) {
+                case '儀表板':
+                    window.location.href = '../student-dashboard.html';
+                    break;
+                case '作業':
+                    window.location.href = '../assignmentsPage/assignments.html';
+                    break;
+                case '成績':
+                    window.location.href = '../gradesPage/grades.html';
+                    break;
+                case '公告':
+                    window.location.href = '../announcementsPage/announcements.html';
+                    break;
+            }
+        } else {
+            // 當前頁面，加上 active 類
+            this.classList.add('active');
+        }
+    });
+});
         
         // 登出功能
         document.querySelector('.logout').addEventListener('click', function() {
