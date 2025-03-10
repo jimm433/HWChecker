@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>學生成績系統</title>
+    <link rel="stylesheet" type="text/css" href="../student-dashboard.css">
+    <link rel="stylesheet" type="text/css" href="grades.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- 側邊欄 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>學生管理系統</h2>
+                <div class="student-info">
+                    <p>張小明</p>
+                    <p>資訊工程學系</p>
+                </div>
+            </div>
+            <ul class="menu">
+                <li class="menu-item">儀表板</li>
+                <li class="menu-item">作業</li>
+                <li class="menu-item">考試</li>
+                <li class="menu-item active">成績</li>
+                <li class="menu-item">公告</li>
+            </ul>
+            <div class="logout">登出系統</div>
+        </div>
+
+        <!-- 主要內容區域 -->
+        <div class="main-content">
+            <div class="header">
+                <h1>成績查詢</h1>
+            </div>
+
+            <!-- 成績概覽 -->
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <h3>本學期平均分數</h3>
+                    <p id="semester-average">88.5</p>
+                </div>
+                <div class="stat-card">
+                    <h3>累計平均分數</h3>
+                    <p id="total-average">85.2</p>
+                </div>
+                <div class="stat-card">
+                    <h3>已修學分數</h3>
+                    <p id="credits-completed">75</p>
+                </div>
+                <div class="stat-card">
+                    <h3>待修學分數</h3>
+                    <p id="credits-remaining">55</p>
+                </div>
+            </div>
+
+            <!-- 成績表格 -->
+            <div class="grades-container">
+                <div class="tabs">
+                    <div class="tab active" data-tab="current">本學期成績</div>
+                    <div class="tab" data-tab="history">歷史成績</div>
+                    <div class="tab" data-tab="chart">成績統計</div>
+                </div>
+
+                <!-- 本學期成績 -->
+                <div class="tab-content active" id="current-content">
+                    <div class="table-container">
+                        <table class="grades-table">
+                            <thead>
+                                <tr>
+                                    <th>課程代碼</th>
+                                    <th>課程名稱</th>
+                                    <th>學分</th>
+                                    <th>授課教師</th>
+                                    <th>平時成績</th>
+                                    <th>期中成績</th>
+                                    <th>期末成績</th>
+                                    <th>總成績</th>
+                                </tr>
+                            </thead>
+                            <tbody id="current-grades">
+                                <!-- 本學期成績將由 JavaScript 填入 -->
+                                <tr>
+                                    <td>CSC101</td>
+                                    <td>程式設計</td>
+                                    <td>3</td>
+                                    <td>王廷叡</td>
+                                    <td>90</td>
+                                    <td>85</td>
+                                    <td>92</td>
+                                    <td class="grade-excellent">90</td>
+                                </tr>
+                                <tr>
+                                    <td>CSC201</td>
+                                    <td>資料結構</td>
+                                    <td>3</td>
+                                    <td>李美華</td>
+                                    <td>88</td>
+                                    <td>92</td>
+                                    <td>85</td>
+                                    <td class="grade-excellent">88</td>
+                                </tr>
+                                <tr>
+                                    <td>CSC303</td>
+                                    <td>演算法</td>
+                                    <td>3</td>
+                                    <td>張建國</td>
+                                    <td>82</td>
+                                    <td>88</td>
+                                    <td>90</td>
+                                    <td class="grade-good">87</td>
+                                </tr>
+                                <tr>
+                                    <td>CSC305</td>
+                                    <td>資料庫系統</td>
+                                    <td>3</td>
+                                    <td>陳文芳</td>
+                                    <td>85</td>
+                                    <td>90</td>
+                                    <td>92</td>
+                                    <td class="grade-excellent">89</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 歷史成績 -->
+                <div class="tab-content" id="history-content">
+                    <div class="semester-selector">
+                        <select id="semester-select" class="form-control">
+                            <option value="112-1">112學年度 第1學期</option>
+                            <option value="111-2">111學年度 第2學期</option>
+                            <option value="111-1">111學年度 第1學期</option>
+                        </select>
+                    </div>
+                    <div class="table-container">
+                        <table class="grades-table">
+                            <thead>
+                                <tr>
+                                    <th>課程代碼</th>
+                                    <th>課程名稱</th>
+                                    <th>學分</th>
+                                    <th>授課教師</th>
+                                    <th>總成績</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-grades">
+                                <!-- 歷史成績將由 JavaScript 填入 -->
+                                <tr>
+                                    <td>CSC102</td>
+                                    <td>計算機概論</td>
+                                    <td>3</td>
+                                    <td>林志明</td>
+                                    <td class="grade-excellent">92</td>
+                                </tr>
+                                <tr>
+                                    <td>CSC104</td>
+                                    <td>離散數學</td>
+                                    <td>3</td>
+                                    <td>王廷叡</td>
+                                    <td class="grade-good">85</td>
+                                </tr>
+                                <tr>
+                                    <td>CSC106</td>
+                                    <td>數位系統設計</td>
+                                    <td>3</td>
+                                    <td>張建國</td>
+                                    <td class="grade-moderate">78</td>
+                                </tr>
+                                <tr>
+                                    <td>CSC108</td>
+                                    <td>線性代數</td>
+                                    <td>3</td>
+                                    <td>李美華</td>
+                                    <td class="grade-good">83</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 成績統計 -->
+                <div class="tab-content" id="chart-content">
+                    <div class="chart-container">
+                        <div class="chart" id="grade-trend-chart">
+                            <h3>成績趨勢</h3>
+                            <div class="chart-canvas">
+                                <!-- 這裡將由 JavaScript 繪製圖表 -->
+                                <div class="placeholder-chart">
+                                    <div class="chart-bar" style="height: 85%;"><span>111-1</span></div>
+                                    <div class="chart-bar" style="height: 82%;"><span>111-2</span></div>
+                                    <div class="chart-bar" style="height: 88%;"><span>112-1</span></div>
+                                    <div class="chart-bar active" style="height: 90%;"><span>112-2</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart" id="subject-comparison-chart">
+                            <h3>學科類別分析</h3>
+                            <div class="chart-canvas">
+                                <!-- 這裡將由 JavaScript 繪製圖表 -->
+                                <div class="radar-chart">
+                                    <div class="radar-point" style="--x: 85%; --y: 20%;">程式設計</div>
+                                    <div class="radar-point" style="--x: 40%; --y: 30%;">數學</div>
+                                    <div class="radar-point" style="--x: 25%; --y: 70%;">理論</div>
+                                    <div class="radar-point" style="--x: 70%; --y: 80%;">系統</div>
+                                    <div class="radar-point" style="--x: 90%; --y: 50%;">應用</div>
+                                    <div class="radar-web"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart" id="grade-distribution-chart">
+                            <h3>成績分佈</h3>
+                            <div class="chart-canvas">
+                                <!-- 這裡將由 JavaScript 繪製圖表 -->
+                                <div class="pie-chart">
+                                    <div class="pie-slice" style="--percentage: 60%; --color: #4caf50;">優良 (90-100)</div>
+                                    <div class="pie-slice" style="--percentage: 25%; --color: #2196f3;">良好 (80-89)</div>
+                                    <div class="pie-slice" style="--percentage: 10%; --color: #ff9800;">中等 (70-79)</div>
+                                    <div class="pie-slice" style="--percentage: 5%; --color: #f44336;">及格 (60-69)</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart" id="credits-chart">
+                            <h3>學分統計</h3>
+                            <div class="chart-canvas">
+                                <!-- 這裡將由 JavaScript 繪製圖表 -->
+                                <div class="progress-chart">
+                                    <div class="progress-item">
+                                        <span class="progress-label">必修</span>
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 65%;"></div>
+                                        </div>
+                                        <span class="progress-value">65%</span>
+                                    </div>
+                                    <div class="progress-item">
+                                        <span class="progress-label">選修</span>
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 45%;"></div>
+                                        </div>
+                                        <span class="progress-value">45%</span>
+                                    </div>
+                                    <div class="progress-item">
+                                        <span class="progress-label">通識</span>
+                                        <div class="progress-bar">
+                                            <div class="progress" style="width: 70%;"></div>
+                                        </div>
+                                        <span class="progress-value">70%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 成績詳情模態窗口 -->
+    <div id="grade-detail-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>成績詳情</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="course-header">
+                    <h3 id="detail-course-name">程式設計</h3>
+                    <div id="detail-course-code">CSC101</div>
+                </div>
+                <div class="course-info">
+                    <div class="info-item">
+                        <span class="info-label">學期：</span>
+                        <span id="detail-semester">112-2</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">學分：</span>
+                        <span id="detail-credits">3</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">授課教師：</span>
+                        <span id="detail-teacher">王廷叡</span>
+                    </div>
+                </div>
+                <div class="grades-breakdown">
+                    <h4>成績明細</h4>
+                    <div class="grade-items">
+                        <div class="grade-item">
+                            <div class="grade-item-name">平時成績 (30%)</div>
+                            <div class="grade-item-score" id="detail-regular">90</div>
+                        </div>
+                        <div class="grade-item">
+                            <div class="grade-item-name">期中考 (30%)</div>
+                            <div class="grade-item-score" id="detail-midterm">85</div>
+                        </div>
+                        <div class="grade-item">
+                            <div class="grade-item-name">期末考 (40%)</div>
+                            <div class="grade-item-score" id="detail-final">92</div>
+                        </div>
+                        <div class="grade-item total">
+                            <div class="grade-item-name">總成績</div>
+                            <div class="grade-item-score" id="detail-total">90</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="teacher-comments">
+                    <h4>教師評語</h4>
+                    <div class="comments-content" id="detail-comments">
+                        表現優異，在課堂上能積極參與討論，作業完成度高，程式碼品質佳。期末專案展現了良好的問題解決能力與創新思維。建議可以更加注重程式效率的優化。
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="grades.js"></script>
+</body>
+
+</html>
