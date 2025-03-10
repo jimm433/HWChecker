@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>學生考試系統</title>
+    <link rel="stylesheet" type="text/css" href="../../studentPage/student-dashboard.css">
+    <link rel="stylesheet" type="text/css" href="exams.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- 側邊欄 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>學生管理系統</h2>
+                <div class="student-info">
+                    <p>張小明</p>
+                    <p>資訊工程學系</p>
+                </div>
+            </div>
+            <ul class="menu">
+                <li class="menu-item">作業</li>
+                <li class="menu-item active">考試</li>
+                <li class="menu-item">成績</li>
+                <li class="menu-item">公告</li>
+            </ul>
+            <div class="logout">登出系統</div>
+        </div>
+
+        <!-- 主要內容區域 -->
+        <div class="main-content">
+            <div class="header">
+                <h1>考試系統</h1>
+            </div>
+
+            <!-- 考試概覽 -->
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <h3>總考試數</h3>
+                    <p id="total-exams">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>即將舉行</h3>
+                    <p id="upcoming-exams">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>已完成</h3>
+                    <p id="completed-exams">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>平均成績</h3>
+                    <p id="average-score">0</p>
+                </div>
+            </div>
+
+            <!-- 考試列表 -->
+            <div class="exam-container">
+                <div class="tabs">
+                    <div class="tab active" data-tab="upcoming">即將舉行</div>
+                    <div class="tab" data-tab="completed">已完成考試</div>
+                    <div class="tab" data-tab="resources">考試資源</div>
+                </div>
+
+                <div class="tab-content active" id="upcoming-content">
+                    <div class="exam-list" id="upcoming-list">
+                        <!-- 即將舉行的考試列表將由 JavaScript 填入 -->
+                        <div class="empty-message">載入中...</div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="completed-content">
+                    <div class="exam-list" id="completed-list">
+                        <!-- 已完成的考試列表將由 JavaScript 填入 -->
+                        <div class="empty-message">載入中...</div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="resources-content">
+                    <div class="resource-list" id="resource-list">
+                        <!-- 考試資源列表將由 JavaScript 填入 -->
+                        <div class="empty-message">載入中...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 考試詳情模態窗口 -->
+    <div id="exam-detail-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>考試詳情</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>考試名稱：</label>
+                    <div id="detail-title" class="form-control-static"></div>
+                </div>
+                <div class="form-group">
+                    <label>課程：</label>
+                    <div id="detail-course" class="form-control-static"></div>
+                </div>
+                <div class="form-group">
+                    <label>日期時間：</label>
+                    <div id="detail-datetime" class="form-control-static"></div>
+                </div>
+                <div class="form-group">
+                    <label>地點：</label>
+                    <div id="detail-location" class="form-control-static"></div>
+                </div>
+                <div class="form-group">
+                    <label>考試說明：</label>
+                    <div id="detail-description" class="form-control-static"></div>
+                </div>
+                <div class="form-group">
+                    <label>考試時長：</label>
+                    <div id="detail-duration" class="form-control-static"></div>
+                </div>
+                <div class="form-group">
+                    <label>考試範圍：</label>
+                    <div id="detail-scope" class="form-control-static"></div>
+                </div>
+                <div class="form-group result-section">
+                    <label>考試結果：</label>
+                    <div id="detail-result" class="form-control-static"></div>
+                </div>
+                <div class="form-group result-section">
+                    <label>教師評語：</label>
+                    <div id="detail-feedback" class="form-control-static"></div>
+                </div>
+                <div class="form-group exam-resource-section">
+                    <label>相關資源：</label>
+                    <div id="detail-resources" class="resource-links"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 資源詳情模態窗口 -->
+    <div id="resource-detail-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>資源詳情</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>資源名稱：</label>
+                    <div id="resource-title" class="form-control-static"></div>
+                </div>
+                <div class="form-group">
+                    <label>關聯課程：</label>
+                    <div id="resource-course" class="form-control-static"></div>
+                </div>
+                <div class="form-group">
+                    <label>上傳日期：</label>
+                    <div id="resource-date" class="form-control-static"></div>
+                </div>
+                <div class="form-group">
+                    <label>描述：</label>
+                    <div id="resource-description" class="form-control-static"></div>
+                </div>
+                <div class="form-group">
+                    <label>檔案：</label>
+                    <div id="resource-file" class="form-control-static">
+                        <a href="#" id="resource-file-link" target="_blank">下載檔案</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="exams.js"></script>
+</body>
+
+</html>

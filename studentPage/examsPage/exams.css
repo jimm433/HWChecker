@@ -1,0 +1,277 @@
+/* 標籤樣式 */
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+}
+
+.tab {
+    padding: 12px 20px;
+    cursor: pointer;
+    margin-right: 5px;
+    border-bottom: 3px solid transparent;
+    font-weight: 600;
+    color: #7f8c8d;
+    transition: all 0.3s;
+}
+
+.tab:hover {
+    color: #3498db;
+}
+
+.tab.active {
+    color: #3498db;
+    border-bottom-color: #3498db;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* 考試容器樣式 */
+.exam-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 20px;
+}
+
+/* 考試列表樣式 */
+.exam-list, .resource-list {
+    width: 100%;
+}
+
+.exam-item, .resource-item {
+    display: flex;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    align-items: center;
+    transition: background-color 0.2s;
+}
+
+.exam-item:hover, .resource-item:hover {
+    background-color: #f9f9f9;
+}
+
+.exam-item:last-child, .resource-item:last-child {
+    border-bottom: none;
+}
+
+.exam-info, .resource-info {
+    flex: 1;
+}
+
+.exam-title, .resource-title {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.exam-meta, .resource-meta {
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: #7f8c8d;
+}
+
+.exam-meta > div, .resource-meta > div {
+    margin-right: 15px;
+    margin-bottom: 5px;
+}
+
+.exam-actions, .resource-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.exam-status {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-upcoming {
+    background-color: #e3f2fd;
+    color: #2196f3;
+}
+
+.status-today {
+    background-color: #ffebee;
+    color: #f44336;
+}
+
+.status-completed {
+    background-color: #e8f5e9;
+    color: #4caf50;
+}
+
+/* 空內容提示 */
+.empty-message {
+    text-align: center;
+    padding: 30px;
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+/* 模態窗口樣式 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    width: 70%;
+    max-width: 800px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: modalFadeIn 0.3s;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    padding: 15px 20px;
+    background-color: #3498db;
+    color: white;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+.close {
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+/* 表單樣式 */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.form-control-static {
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    min-height: 40px;
+}
+
+/* 資源連結 */
+.resource-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.resource-link {
+    display: block;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    color: #3498db;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.resource-link:hover {
+    background-color: #edf2f7;
+}
+
+/* 倒數計時樣式 */
+.countdown {
+    font-weight: bold;
+    color: #e74c3c;
+}
+
+/* 考試結果部分 (默認隱藏) */
+.result-section {
+    display: none;
+}
+
+/* 專門為考試資源部分的樣式 */
+.exam-resource-section {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+/* 按鈕樣式 */
+.button-small {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+/* 資源類型圖標 */
+.resource-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 20px;
+    color: white;
+}
+
+.icon-pdf {
+    background-color: #e74c3c;
+}
+
+.icon-doc {
+    background-color: #3498db;
+}
+
+.icon-ppt {
+    background-color: #e67e22;
+}
+
+.icon-video {
+    background-color: #9b59b6;
+}
+
+.icon-other {
+    background-color: #95a5a6;
+}
