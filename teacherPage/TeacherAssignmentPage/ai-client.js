@@ -45,27 +45,36 @@ class AIClient {
      */
     async sendRequest(endpoint, method = 'GET', data = null) {
         const url = `${this.baseUrl}${endpoint}`;
+        console.log(`正在發送 ${method} 請求到: ${url}`);
+        
         const options = {
             method,
             headers: this.getHeaders(),
             credentials: 'include'
         };
-
+    
         if (data && (method === 'POST' || method === 'PUT')) {
             options.body = JSON.stringify(data);
+            console.log('請求數據:', data);
         }
-
+    
         try {
+            console.log('完整請求配置:', options);
             const response = await fetch(url, options);
+            
+            console.log(`收到響應，狀態碼: ${response.status}`);
             
             if (!response.ok) {
                 const errorText = await response.text();
+                console.error(`API請求失敗: ${response.status} ${response.statusText} - ${errorText}`);
                 throw new Error(`API request failed: ${response.status} ${response.statusText} - ${errorText}`);
             }
-
-            return await response.json();
+    
+            const responseData = await response.json();
+            console.log('響應數據:', responseData);
+            return responseData;
         } catch (error) {
-            console.error('API request error:', error);
+            console.error('API請求錯誤:', error);
             throw error;
         }
     }
@@ -180,3 +189,4 @@ if (typeof module !== 'undefined' && module.exports) {
 } else {
     window.AIClient = AIClient;
 }
+
