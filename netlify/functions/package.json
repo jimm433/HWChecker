@@ -1,22 +1,22 @@
 {
     "name": "hwchecker",
     "version": "1.0.0",
-    "description": "Enhanced Homework Grading System",
-    "main": "script.js",
+    "description": "AI作業批改系統",
+    "main": "index.js",
     "scripts": {
+      "start": "netlify dev",
+      "build": "netlify build",
       "test": "echo \"Error: no test specified\" && exit 1"
     },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
     "dependencies": {
       "cors": "^2.8.5",
       "dotenv": "^16.4.7",
       "express": "^4.21.2",
-      "mammoth": "^1.6.0",
       "mongodb": "^6.15.0",
-      "openai": "^4.20.1",
-      "pdf-parse": "^1.1.1",
+      "openai": "^4.89.0",
       "serverless-http": "^3.2.0"
+    },
+    "devDependencies": {
+      "netlify-cli": "^17.10.1"
     }
   }
