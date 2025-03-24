@@ -490,3 +490,62 @@ input:checked+.slider:before {
 .status-failed {
     color: #e74c3c;
 }
+
+/* 新增檔案列表和上傳按鈕樣式 */
+.file-attachments {
+    margin-top: 20px;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+}
+
+.file-list {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+.file-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    border: 1px solid #ddd;
+    margin-bottom: 5px;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.file-list li button {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.file-list li button:hover {
+    background-color: #c0392b;
+}
+
+#upload-file-btn {
+    margin-bottom: 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#upload-file-btn:hover {
+    background-color: #2980b9;
+}
+
+/* 隱藏技術上傳輸入框 */
+#assignment-file-upload {
+    display: none;
+}

@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>作業批改 - 教師管理系統</title>
     <link rel="stylesheet" type="text/css" href="../teacher-dashboard.css">
     <link rel="stylesheet" type="text/css" href="assignment-grading.css">
 </head>
-
 <body>
     <div class="container">
         <!-- 側邊欄 -->
@@ -39,7 +37,7 @@
 
             <!-- 作業批改區域 -->
             <div class="grading-section">
-                <!-- 作業選擇 -->
+                <!-- 課程選擇 -->
                 <div class="card">
                     <div class="card-header">
                         <h3>選擇作業</h3>
@@ -79,7 +77,6 @@
                             <span class="switch-label">啟用AI自動批改</span>
                         </div>
                         
-                        <!-- 新增 AI 模型選擇器 -->
                         <div class="form-group">
                             <label for="ai-provider-select">AI模型：</label>
                             <select id="ai-provider-select" class="form-control">
@@ -88,22 +85,6 @@
                             </select>
                         </div>
                         
-                        <div class="form-group">
-                            <label for="grading-criteria">評分標準：</label>
-                            <select id="grading-criteria" class="form-control">
-                                <option value="strict">嚴格標準</option>
-                                <option value="normal" selected>一般標準</option>
-                                <option value="lenient">寬鬆標準</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="ai-feedback-level">回饋詳細程度：</label>
-                            <select id="ai-feedback-level" class="form-control">
-                                <option value="brief">簡短</option>
-                                <option value="normal" selected>一般</option>
-                                <option value="detailed">詳細</option>
-                            </select>
-                        </div>
                         <button id="batch-grade" class="button" disabled>批次AI批改</button>
                     </div>
                 </div>
@@ -187,8 +168,8 @@
                                 </div>
                                 <div class="file-attachments">
                                     <h4>附加檔案</h4>
-                                    <ul id="file-list">
-                                    </ul>
+                                    <button id="upload-file-btn" class="button-small">上傳檔案</button>
+                                    <ul id="file-list" class="file-list"></ul>
                                 </div>
                             </div>
 
@@ -269,5 +250,4 @@
     <!-- 引入批改頁面腳本 -->
     <script src="assignment-grading.js"></script>
 </body>
-
 </html>
