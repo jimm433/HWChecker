@@ -3,16 +3,18 @@
   functions = "netlify/functions"
 
 [[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/api"
-  status = 200
-  
-[[redirects]]
-  from = "/ai-grading/*"
-  to = "/.netlify/functions/ai-grading/:splat"
+  from = "/api/ai-grading"
+  to = "/.netlify/functions/ai-grading"
   status = 200
 
-  [[redirects]]
-  from = "/api/grade-assignment"
-  to = "/.netlify/functions/grade-assignment"
+[[redirects]]
+  from = "/api/batch-grading"
+  to = "/.netlify/functions/batch-grading"
   status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
