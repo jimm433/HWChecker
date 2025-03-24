@@ -78,6 +78,16 @@
                             </label>
                             <span class="switch-label">啟用AI自動批改</span>
                         </div>
+                        
+                        <!-- 新增 AI 模型選擇器 -->
+                        <div class="form-group">
+                            <label for="ai-provider-select">AI模型：</label>
+                            <select id="ai-provider-select" class="form-control">
+                                <option value="gpt">OpenAI GPT</option>
+                                <option value="claude">Anthropic Claude</option>
+                            </select>
+                        </div>
+                        
                         <div class="form-group">
                             <label for="grading-criteria">評分標準：</label>
                             <select id="grading-criteria" class="form-control">
@@ -251,7 +261,12 @@
             </div>
         </div>
     </div>
-    <script src="../teacherPage/teacher-dashboard.js"></script>
+    
+    <!-- 引入腳本文件 -->
+    <script src="../teacher-dashboard.js"></script>
+    <!-- 引入AI客戶端腳本 -->
+    <script src="ai-client.js"></script>
+    <!-- 引入批改頁面腳本 -->
     <script src="assignment-grading.js"></script>
 </body>
 

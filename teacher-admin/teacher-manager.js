@@ -1,5 +1,6 @@
-// teacher-manager.js 
-//記得先 npm install mongodb    
+// node teacher-manager.js
+//記得先cd \Users\m306\Desktop\HWChecker
+//  npm install mongodb    
 const { MongoClient, ServerApiVersion } = require('mongodb');
 require('dotenv').config();
 

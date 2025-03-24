@@ -6,3 +6,8 @@
   from = "/api/*"
   to = "/.netlify/functions/api"
   status = 200
+  
+[[redirects]]
+  from = "/ai-grading/*"
+  to = "/.netlify/functions/ai-grading/:splat"
+  status = 200
