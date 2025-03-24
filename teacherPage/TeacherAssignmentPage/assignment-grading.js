@@ -1,14 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // 初始化 AI 客戶端
-    const aiClient = new AIClient('/api/ai');
-    
     // DOM元素
     const courseSelect = document.getElementById('course-select');
     const assignmentSelect = document.getElementById('assignment-select');
     const loadAssignmentsBtn = document.getElementById('load-assignments');
     const autoGradeToggle = document.getElementById('auto-grade-toggle');
-    const gradingCriteriaSelect = document.getElementById('grading-criteria');
-    const aiFeedbackLevelSelect = document.getElementById('ai-feedback-level');
     const batchGradeBtn = document.getElementById('batch-grade');
     const refreshListBtn = document.getElementById('refresh-list');
     const assignmentList = document.getElementById('assignment-list');
@@ -22,26 +17,48 @@ document.addEventListener('DOMContentLoaded', function() {
     const saveGradeBtn = document.getElementById('save-grade');
     const cancelGradeBtn = document.getElementById('cancel-grade');
     
-    // 從 localStorage 讀取用戶資訊
-    const userId = localStorage.getItem('userId');
-    const userName = localStorage.getItem('userName');
-    const userRole = localStorage.getItem('userRole');
-    
-    // 檢查是否已登入
-    if (!userId || !userName || userRole !== 'teacher') {
-        // 未登入或不是教師，重定向到登入頁面
-        alert('請先登入');
-        window.location.href = '../../index.html';
-        return;
-    }
-
-    // 更新頁面上的教師資訊
-    updateUserInfo(userName);
+    // 檢查環境
+    const isDevelopment = window.location.hostname === 'localhost' || 
+                          window.location.hostname === '127.0.0.1';
     
     // 全局變數
     let currentAssignments = [];
     let currentAssignmentData = null;
     let isLoading = false;
+
+    // 驗證用戶會話
+    function validateUserSession() {
+        const userId = localStorage.getItem('userId');
+        const userName = localStorage.getItem('userName');
+        const userRole = localStorage.getItem('userRole');
+        
+        if (!userId || !userName || userRole !== 'teacher') {
+            return false;
+        }
+        
+        return { userId, userName, userRole };
+    }
+    
+    // 用戶會話驗證
+    const user = validateUserSession();
+    if (!user) {
+        alert('您的登入已過期或無效，請重新登入。');
+        try {
+            window.location.href = '../../index.html';
+        } catch (e) {
+            console.error('導航失敗:', e);
+            document.body.innerHTML = `
+                <div style="text-align: center; margin-top: 100px;">
+                    <h1>會話已過期</h1>
+                    <p>您的登入已失效，請<a href="../../index.html">點擊這裡</a>重新登入。</p>
+                </div>
+            `;
+        }
+        return;
+    }
+
+    // 更新頁面上的教師資訊
+    updateUserInfo(user.userName);
 
     // 初始設置
     initializeApp();
@@ -153,18 +170,12 @@ document.addEventListener('DOMContentLoaded', function() {
             modal.style.display = 'none';
         });
         
-        // 登出功能
-        document.querySelector('.logout').addEventListener('click', function() {
-            if (confirm('確定要登出嗎？')) {
-                // 清除 localStorage 中的用戶資訊
-                localStorage.removeItem('userId');
-                localStorage.removeItem('userName');
-                localStorage.removeItem('userRole');
-                
-                window.location.href = '../../index.html';
-            }
-        });
-        
+        // 設置導航監聽器
+        setupNavigationListeners();
+    }
+    
+    // 設置導航監聽器
+    function setupNavigationListeners() {
         // 側邊欄選單項目點擊事件
         document.querySelectorAll('.menu-item').forEach(item => {
             item.addEventListener('click', function() {
@@ -194,18 +205,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         });
+        
+        // 登出功能
+        document.querySelector('.logout').addEventListener('click', function() {
+            if (confirm('確定要登出嗎？')) {
+                localStorage.removeItem('userId');
+                localStorage.removeItem('userName');
+                localStorage.removeItem('userRole');
+                window.location.href = '../../index.html';
+            }
+        });
     }
 
     // 載入課程資料
     function loadCourseData() {
-        // 顯示載入狀態
         showLoading(true);
         
-        // 從API獲取課程資料
-        fetch('/api/teacher/courses')
+        if (isDevelopment) {
+            const mockCourses = [
+                { id: 'programming', name: '程式設計' },
+                { id: 'datastructure', name: '資料結構' },
+                { id: 'algorithm', name: '演算法' },
+                { id: 'database', name: '資料庫系統' }
+            ];
+            fillCoursesDropdown(mockCourses);
+            showLoading(false);
+            return;
+        }
+        
+        fetch('/.netlify/functions/api/teacher/courses')
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('無法載入課程資料');
+                    throw new Error(`伺服器回應錯誤: ${response.status} ${response.statusText}`);
                 }
                 return response.json();
             })
@@ -215,12 +246,11 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error('載入課程資料錯誤:', error);
-                // 使用模擬數據
+                alert(`載入課程資料失敗: ${error.message}。將使用模擬數據。`);
+                
                 const mockCourses = [
                     { id: 'programming', name: '程式設計' },
-                    { id: 'datastructure', name: '資料結構' },
-                    { id: 'algorithm', name: '演算法' },
-                    { id: 'database', name: '資料庫系統' }
+                    { id: 'datastructure', name: '資料結構' }
                 ];
                 fillCoursesDropdown(mockCourses);
                 showLoading(false);
@@ -240,14 +270,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 載入課程的作業
     function loadAssignmentsForCourse(courseId) {
-        // 顯示載入狀態
         showLoading(true);
         
-        // 從API獲取課程的作業列表
-        fetch(`/api/teacher/courses/${courseId}/assignments`)
+        if (isDevelopment) {
+            const mockAssignments = [
+                { id: 'hw1', name: '作業1: 基礎語法' },
+                { id: 'hw2', name: '作業2: 條件與循環' }
+            ];
+            fillAssignmentsDropdown(mockAssignments);
+            showLoading(false);
+            return;
+        }
+        
+        fetch(`/.netlify/functions/api/teacher/courses/${courseId}/assignments`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('無法載入作業列表');
+                    throw new Error(`伺服器回應錯誤: ${response.status} ${response.statusText}`);
                 }
                 return response.json();
             })
@@ -257,29 +295,13 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error('載入作業列表錯誤:', error);
-                // 使用模擬數據
-                const mockAssignmentsMap = {
-                    'programming': [
-                        { id: 'prog-hw1', name: '程式設計作業1: 基礎語法' },
-                        { id: 'prog-hw2', name: '程式設計作業2: 條件與循環' },
-                        { id: 'prog-hw3', name: '程式設計作業3: 函數與模組化' }
-                    ],
-                    'datastructure': [
-                        { id: 'ds-hw1', name: '資料結構作業1: 陣列與鏈結串列' },
-                        { id: 'ds-hw2', name: '資料結構作業2: 堆疊與佇列' }
-                    ],
-                    'algorithm': [
-                        { id: 'algo-hw1', name: '演算法作業1: 排序演算法' },
-                        { id: 'algo-hw2', name: '演算法作業2: 搜尋演算法' }
-                    ],
-                    'database': [
-                        { id: 'db-hw1', name: '資料庫作業1: SQL基礎查詢' },
-                        { id: 'db-hw2', name: '資料庫作業2: 資料庫設計' }
-                    ]
-                };
+                alert(`載入作業列表失敗: ${error.message}。將使用模擬數據。`);
                 
-                const assignments = mockAssignmentsMap[courseId] || [];
-                fillAssignmentsDropdown(assignments);
+                const mockAssignments = [
+                    { id: 'hw1', name: '作業1: 基礎語法' },
+                    { id: 'hw2', name: '作業2: 條件與循環' }
+                ];
+                fillAssignmentsDropdown(mockAssignments);
                 showLoading(false);
             });
     }
@@ -295,33 +317,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 載入作業提交記錄
     function loadAssignmentSubmissions(courseId, assignmentId) {
-        // 顯示載入中提示
         assignmentList.innerHTML = '<tr class="empty-row"><td colspan="7">載入中...</td></tr>';
         showLoading(true);
 
-        // 從API獲取作業提交記錄
-        fetch(`/api/teacher/courses/${courseId}/assignments/${assignmentId}/submissions`)
+        if (isDevelopment) {
+            const mockSubmissions = generateMockSubmissions();
+            currentAssignments = mockSubmissions;
+            assignmentCountEl.textContent = mockSubmissions.length;
+            renderAssignmentList(mockSubmissions);
+            showLoading(false);
+            return;
+        }
+
+        fetch(`/.netlify/functions/api/teacher/courses/${courseId}/assignments/${assignmentId}/submissions`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('無法載入作業提交記錄');
+                    throw new Error(`伺服器回應錯誤: ${response.status} ${response.statusText}`);
                 }
                 return response.json();
             })
             .then(submissions => {
-                // 保存當前作業數據
                 currentAssignments = submissions;
-
-                // 更新數量顯示
                 assignmentCountEl.textContent = submissions.length;
-
-                // 填充作業列表
                 renderAssignmentList(submissions);
                 showLoading(false);
             })
             .catch(error => {
                 console.error('載入作業提交記錄錯誤:', error);
-                // 使用模擬數據
-                const mockSubmissions = generateMockSubmissions(courseId, assignmentId);
+                alert(`載入作業提交記錄失敗: ${error.message}。將使用模擬數據。`);
+                
+                const mockSubmissions = generateMockSubmissions();
                 currentAssignments = mockSubmissions;
                 assignmentCountEl.textContent = mockSubmissions.length;
                 renderAssignmentList(mockSubmissions);
@@ -378,62 +403,29 @@ document.addEventListener('DOMContentLoaded', function() {
     // 獲取AI狀態的CSS類
     function getAiStatusClass(status) {
         switch (status) {
-            case '未處理':
-                return 'status-pending';
-            case '處理中':
-                return 'status-processing';
-            case '已完成':
-                return 'status-completed';
-            case '失敗':
-                return 'status-failed';
-            default:
-                return '';
+            case '未處理': return 'status-pending';
+            case '處理中': return 'status-processing';
+            case '已完成': return 'status-completed';
+            case '失敗': return 'status-failed';
+            default: return '';
         }
     }
 
     // 生成模擬作業提交數據 (開發環境使用)
-    function generateMockSubmissions(courseId, assignmentId) {
-        const courseNames = {
-            'programming': '程式設計',
-            'datastructure': '資料結構',
-            'algorithm': '演算法',
-            'database': '資料庫系統'
-        };
-
-        const assignmentNames = {
-            'prog-hw1': '程式設計作業1: 基礎語法',
-            'prog-hw2': '程式設計作業2: 條件與循環',
-            'prog-hw3': '程式設計作業3: 函數與模組化',
-            'ds-hw1': '資料結構作業1: 陣列與鏈結串列',
-            'ds-hw2': '資料結構作業2: 堆疊與佇列',
-            'algo-hw1': '演算法作業1: 排序演算法',
-            'algo-hw2': '演算法作業2: 搜尋演算法',
-            'db-hw1': '資料庫作業1: SQL基礎查詢',
-            'db-hw2': '資料庫作業2: 資料庫設計'
-        };
-
-        const courseName = courseNames[courseId] || courseId;
-        const assignmentName = assignmentNames[assignmentId] || assignmentId;
-
-        // 學生名單
+    function generateMockSubmissions() {
+        // 簡化的模擬數據
         const students = [
             { name: '陳小明', id: 'S10911001' },
             { name: '林雅婷', id: 'S10911002' },
-            { name: '王大華', id: 'S10911003' },
-            { name: '張美玲', id: 'S10911004' },
-            { name: '李俊宏', id: 'S10911005' },
-            { name: '黃雅琪', id: 'S10911006' },
-            { name: '吳建志', id: 'S10911007' },
-            { name: '劉詩涵', id: 'S10911008' }
+            { name: '王大華', id: 'S10911003' }
         ];
-
-        // 生成10-20份作業提交
-        const count = Math.floor(Math.random() * 11) + 10;
+        
+        const aiStatuses = ['未處理', '處理中', '已完成', '失敗'];
         const submissions = [];
 
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < 5; i++) {
             const student = students[i % students.length];
-            const aiStatus = ['未處理', '處理中', '已完成', '失敗'][Math.floor(Math.random() * 4)];
+            const aiStatus = aiStatuses[Math.floor(Math.random() * 4)];
             let aiScore = null;
 
             if (aiStatus === '已完成') {
@@ -441,27 +433,23 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             const teacherConfirmed = Math.random() > 0.7;
-
-            // 生成3天內的隨機時間
             const now = new Date();
             const submitDate = new Date(now.getTime() - Math.random() * 3 * 24 * 60 * 60 * 1000);
             const submitTime = submitDate.toLocaleString('zh-TW');
 
             submissions.push({
-                id: `${assignmentId}-${student.id}`,
+                id: `hw-${student.id}-${i}`,
                 studentName: student.name,
                 studentId: student.id,
-                courseName: courseName,
-                courseId: courseId,
-                assignmentName: assignmentName,
-                assignmentId: assignmentId,
+                courseName: '程式設計',
+                courseId: 'programming',
+                assignmentName: '作業1: 基礎語法',
+                assignmentId: 'hw1',
                 submitTime: submitTime,
                 aiStatus: aiStatus,
                 aiScore: aiScore,
                 teacherConfirmed: teacherConfirmed,
-                // 模擬作業內容
-                content: generateMockAssignmentContent(courseId, assignmentId),
-                // 如果AI已評分，添加AI評分細節
+                content: generateMockContent(),
                 aiGrade: aiStatus === '已完成' ? generateMockAiGrading(aiScore) : null
             });
         }
@@ -469,10 +457,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return submissions;
     }
 
-    // 生成模擬作業內容 (開發環境使用)
-    function generateMockAssignmentContent(courseId, assignmentId) {
-        const contentTemplates = {
-            'programming': `#include <stdio.h>
+    // 生成模擬作業內容
+    function generateMockContent() {
+        return `#include <stdio.h>
 
 int main() {
     // 變數宣告
@@ -492,167 +479,24 @@ int main() {
     printf("1到%d的和為: %d\\n", n, sum);
     
     return 0;
-}`,
-            'datastructure': `class Node {
-    constructor(data) {
-        this.data = data;
-        this.next = null;
-    }
-}
-
-class LinkedList {
-    constructor() {
-        this.head = null;
-    }
-    
-    // 在鏈結串列尾端插入新節點
-    append(data) {
-        const newNode = new Node(data);
-        
-        if (!this.head) {
-            this.head = newNode;
-            return;
-        }
-        
-        let current = this.head;
-        while (current.next) {
-            current = current.next;
-        }
-        
-        current.next = newNode;
-    }
-    
-    // 顯示鏈結串列的所有元素
-    display() {
-        let current = this.head;
-        let elements = [];
-        
-        while (current) {
-            elements.push(current.data);
-            current = current.next;
-        }
-        
-        return elements.join(' -> ');
-    }
-}
-
-// 測試鏈結串列
-const list = new LinkedList();
-list.append(10);
-list.append(20);
-list.append(30);
-console.log(list.display()); // 輸出: 10 -> 20 -> 30`,
-            'algorithm': `function quickSort(arr, left = 0, right = arr.length - 1) {
-    if (left < right) {
-        const pivotIndex = partition(arr, left, right);
-        quickSort(arr, left, pivotIndex - 1);
-        quickSort(arr, pivotIndex + 1, right);
-    }
-    return arr;
-}
-
-function partition(arr, left, right) {
-    const pivot = arr[right];
-    let i = left - 1;
-    
-    for (let j = left; j < right; j++) {
-        if (arr[j] <= pivot) {
-            i++;
-            [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-    }
-    
-    [arr[i + 1], arr[right]] = [arr[right], arr[i + 1]];
-    return i + 1;
-}
-
-// 測試快速排序
-const arr = [34, 7, 23, 32, 5, 62];
-console.log("排序前:", arr);
-console.log("排序後:", quickSort(arr));`,
-            'database': `-- 創建學生表格
-CREATE TABLE Students (
-    student_id VARCHAR(10) PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
-    email VARCHAR(100) UNIQUE,
-    department VARCHAR(50),
-    admission_year INT
-);
-
--- 創建課程表格
-CREATE TABLE Courses (
-    course_id VARCHAR(10) PRIMARY KEY,
-    title VARCHAR(100) NOT NULL,
-    credits INT,
-    instructor VARCHAR(50)
-);
-
--- 創建選課表格
-CREATE TABLE Enrollments (
-    enrollment_id INT PRIMARY KEY AUTO_INCREMENT,
-    student_id VARCHAR(10),
-    course_id VARCHAR(10),
-    semester VARCHAR(20),
-    grade FLOAT,
-    FOREIGN KEY (student_id) REFERENCES Students(student_id),
-    FOREIGN KEY (course_id) REFERENCES Courses(course_id)
-);
-
--- 查詢每位學生選的課程數量
-SELECT s.student_id, s.name, COUNT(e.course_id) as course_count
-FROM Students s
-LEFT JOIN Enrollments e ON s.student_id = e.student_id
-GROUP BY s.student_id, s.name
-ORDER BY course_count DESC;`
-        };
-
-        return contentTemplates[courseId] || '// 作業內容';
+}`;
     }
 
-    // 生成模擬AI評分結果 (開發環境使用)
+    // 生成模擬AI評分結果
     function generateMockAiGrading(score) {
         const gradingItems = [
-            { name: '程式正確性', score: Math.floor(Math.random() * 11) + 20, maxScore: 30, comment: '程式執行結果正確，但有些邊界條件處理不夠完善' },
-            { name: '程式效率', score: Math.floor(Math.random() * 6) + 15, maxScore: 20, comment: '演算法選擇適當，但時間複雜度可以再優化' },
-            { name: '程式碼風格', score: Math.floor(Math.random() * 6) + 15, maxScore: 20, comment: '變數命名適當，但程式碼註解不夠詳細' },
-            { name: '程式架構', score: Math.floor(Math.random() * 6) + 15, maxScore: 20, comment: '程式模組化尚可，但函數抽象程度不夠' },
-            { name: '報告完整性', score: Math.floor(Math.random() * 3) + 8, maxScore: 10, comment: '報告內容大致完整，但缺少測試數據分析' }
+            { name: '程式正確性', score: 25, maxScore: 30, comment: '程式執行結果正確，但有些邊界條件處理不夠完善' },
+            { name: '程式效率', score: 18, maxScore: 20, comment: '演算法選擇適當，但時間複雜度可以再優化' },
+            { name: '程式碼風格', score: 16, maxScore: 20, comment: '變數命名適當，但程式碼註解不夠詳細' },
+            { name: '程式架構', score: 18, maxScore: 20, comment: '程式模組化尚可，但函數抽象程度不夠' },
+            { name: '報告完整性', score: 8, maxScore: 10, comment: '報告內容大致完整，但缺少測試數據分析' }
         ];
-
-        const totalGradingScore = gradingItems.reduce((sum, item) => sum + item.score, 0);
 
         return {
             score: score,
             gradingItems: gradingItems,
-            summary: `整體來說，此作業達到了課程要求的基本標準。程式能夠正確處理輸入並產生期望的輸出，但在程式效率和程式碼風格方面還有改進空間。建議同學未來可以注重以下幾點：
-1. 處理更多的邊界條件和異常情況
-2. 進一步優化演算法的時間和空間複雜度
-3. 增加更詳細的註釋和文檔
-4. 提高程式碼的可讀性和可維護性
-5. 在報告中加入更多的測試數據和分析`,
-            feedback: `程式能夠正確執行，但在以下幾方面可以進一步改進：
-
-1. 程式正確性（${gradingItems[0].score}/${gradingItems[0].maxScore}分）：
-   - 基本功能正確實現
-   - 但缺少輸入驗證，例如檢查n是否為正整數
-   - 未處理極端情況，如大數值可能導致的整數溢出
-
-2. 程式效率（${gradingItems[1].score}/${gradingItems[1].maxScore}分）：
-   - 當前實現的時間複雜度為O(n)
-   - 可考慮使用數學公式sum = n*(n+1)/2，將時間複雜度降為O(1)
-
-3. 程式碼風格（${gradingItems[2].score}/${gradingItems[2].maxScore}分）：
-   - 變數命名清晰易懂
-   - 程式碼結構良好
-   - 但註釋不夠詳細，特別是演算法的思考過程
-
-4. 程式架構（${gradingItems[3].score}/${gradingItems[3].maxScore}分）：
-   - 基本的模組化設計
-   - 功能應進一步抽象為獨立函數以提高可讀性和可重用性
-
-5. 報告完整性（${gradingItems[4].score}/${gradingItems[4].maxScore}分）：
-   - 報告中包含了基本的問題描述和解決方案
-   - 缺少演算法分析和測試結果的詳細討論`
+            summary: `整體來說，此作業達到了課程要求的基本標準。程式能夠正確處理輸入並產生期望的輸出，但在程式效率和程式碼風格方面還有改進空間。`,
+            feedback: `程式能夠正確執行，但建議改進：\n1. 增加輸入驗證\n2. 使用數學公式優化計算\n3. 增加更詳細的註釋\n4. 進一步模組化代碼`
         };
     }
 
@@ -678,7 +522,7 @@ ORDER BY course_count DESC;`
         // 填充代碼查看器
         document.querySelector('#student-code code').textContent = submission.content;
         
-        // 高亮代碼（如果有使用程式碼高亮庫如highlight.js）
+        // 如果有程式碼高亮庫，則應用高亮
         if (typeof hljs !== 'undefined') {
             document.querySelectorAll('pre code').forEach((block) => {
                 hljs.highlightBlock(block);
@@ -758,88 +602,126 @@ ORDER BY course_count DESC;`
         document.getElementById('ai-status-value').textContent = '處理中';
         document.getElementById('ai-status-value').classList.add('pulsing');
         document.getElementById('trigger-ai-grade').disabled = true;
-        isLoading = true;
+        showLoading(true, 'AI批改中...');
 
-        // 獲取評分標準和回饋詳細程度
-        const criteriaLevel = gradingCriteriaSelect.value;
-        const feedbackLevel = aiFeedbackLevelSelect.value;
-
-        // 準備發送給AI批改的數據
-        const gradingData = {
-            submission: {
-                id: submission.id,
-                studentId: submission.studentId,
-                courseId: submission.courseId,
-                assignmentId: submission.assignmentId,
-                content: submission.content
-            },
-            options: {
-                criteriaLevel: criteriaLevel,
-                feedbackLevel: feedbackLevel
+        // 準備請求數據
+        const requestData = {
+            submissionId: submission.id,
+            studentId: submission.studentId,
+            content: submission.content,
+            gradingOptions: {
+                strictness: document.getElementById('grading-criteria').value,
+                detailLevel: document.getElementById('ai-feedback-level').value
             }
         };
 
-        // 調用AI服務進行批改
-        aiClient.gradeAssignment(gradingData.submission, gradingData.options)
-            .then(response => {
-                if (response.success) {
-                    // 更新作業數據
-                    submission.aiStatus = '已完成';
-                    submission.aiScore = response.score;
-                    submission.aiGrade = {
-                        score: response.score,
-                        gradingItems: response.gradingItems,
-                        summary: response.summary,
-                        feedback: response.feedback
-                    };
-
-                    // 更新UI
-                    document.getElementById('ai-status-value').textContent = '已完成';
-                    document.getElementById('ai-status-value').classList.remove('pulsing');
-                    document.getElementById('ai-score').textContent = response.score;
-                    document.getElementById('ai-comments').textContent = response.feedback;
-
-                    // 更新評分項目表格
-                    const aiGradingItemsTable = document.getElementById('ai-grading-items').querySelector('tbody');
-                    aiGradingItemsTable.innerHTML = response.gradingItems.map(item => `
-                        <tr>
-                            <td>${item.name}</td>
-                            <td>${item.score}</td>
-                            <td>${item.maxScore}</td>
-                            <td>${item.comment}</td>
-                        </tr>
-                    `).join('');
-
-                    // 啟用"採用AI評分"選項
-                    document.getElementById('accept-ai-grade').disabled = false;
-                } else {
-                    // AI批改失敗
-                    submission.aiStatus = '失敗';
-                    document.getElementById('ai-status-value').textContent = '失敗';
-                    document.getElementById('ai-status-value').classList.remove('pulsing');
-                    document.getElementById('ai-score').textContent = '-';
-                    document.getElementById('ai-comments').textContent = '批改失敗: ' + (response.error || '未知錯誤');
-                    document.getElementById('accept-ai-grade').disabled = true;
-                }
-
-                // 重新渲染作業列表
-                renderAssignmentList(currentAssignments);
-                isLoading = false;
-            })
-            .catch(error => {
-                console.error('AI批改錯誤:', error);
+        if (isDevelopment) {
+            // 模擬延遲
+            setTimeout(() => {
+                const score = Math.floor(Math.random() * 31) + 70;
+                const aiGrade = generateMockAiGrading(score);
                 
-                // 更新UI狀態
-                submission.aiStatus = '失敗';
-                document.getElementById('ai-status-value').textContent = '失敗';
+                // 更新作業數據
+                submission.aiStatus = '已完成';
+                submission.aiScore = score;
+                submission.aiGrade = aiGrade;
+                
+                // 更新UI
+                document.getElementById('ai-status-value').textContent = '已完成';
                 document.getElementById('ai-status-value').classList.remove('pulsing');
-                document.getElementById('ai-comments').textContent = '批改失敗: ' + error.message;
-                document.getElementById('accept-ai-grade').disabled = true;
+                document.getElementById('ai-score').textContent = score;
+                document.getElementById('ai-comments').textContent = aiGrade.feedback;
+
+                // 更新評分項目表格
+                const aiGradingItemsTable = document.getElementById('ai-grading-items').querySelector('tbody');
+                aiGradingItemsTable.innerHTML = aiGrade.gradingItems.map(item => `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.score}</td>
+                        <td>${item.maxScore}</td>
+                        <td>${item.comment}</td>
+                    </tr>
+                `).join('');
                 
-                // 重新渲染作業列表
+                // 啟用"採用AI評分"選項
+                document.getElementById('accept-ai-grade').disabled = false;
+                
+                // 刷新作業列表
                 renderAssignmentList(currentAssignments);
-                isLoading = false;
-            });
+                
+                showLoading(false);
+            }, 2000);
+            return;
+        }
+
+        // 調用 Netlify Function API
+        fetch('/.netlify/functions/api/ai-grading', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`API請求失敗: ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                console.log('AI批改結果:', data);
+                
+                // 更新作業數據
+                submission.aiStatus = '已完成';
+                submission.aiScore = data.result.score;
+                submission.aiGrade = data.result;
+                
+                // 更新UI
+                document.getElementById('ai-status-value').textContent = '已完成';
+                document.getElementById('ai-status-value').classList.remove('pulsing');
+                document.getElementById('ai-score').textContent = data.result.score;
+                document.getElementById('ai-comments').textContent = data.result.feedback;
+
+                // 更新評分項目表格
+                const aiGradingItemsTable = document.getElementById('ai-grading-items').querySelector('tbody');
+                aiGradingItemsTable.innerHTML = data.result.gradingItems.map(item => `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.score}</td>
+                        <td>${item.maxScore}</td>
+                        <td>${item.comment}</td>
+                    </tr>
+                `).join('');
+                
+                // 啟用"採用AI評分"選項
+                document.getElementById('accept-ai-grade').disabled = false;
+                
+                // 刷新作業列表
+                renderAssignmentList(currentAssignments);
+            } else {
+                throw new Error(data.message || 'AI批改失敗');
+            }
+        })
+        .catch(error => {
+            console.error('AI批改發生錯誤:', error);
+            
+            // 更新UI顯示錯誤狀態
+            document.getElementById('ai-status-value').textContent = '失敗';
+            document.getElementById('ai-status-value').classList.remove('pulsing');
+            document.getElementById('ai-status-value').classList.add('status-failed');
+            document.getElementById('trigger-ai-grade').disabled = false;
+            
+            // 更新作業狀態
+            submission.aiStatus = '失敗';
+            renderAssignmentList(currentAssignments);
+            
+            // 顯示錯誤訊息
+            alert(`AI批改發生錯誤: ${error.message}`);
+        })
+        .finally(() => {
+            showLoading(false);
+        });
     }
 
     // 批次批改作業
@@ -857,80 +739,94 @@ ORDER BY course_count DESC;`
 
         if (confirm(confirmMessage)) {
             // 顯示處理中的訊息
-            alert(`開始批次批改 ${pendingAssignments.length} 份作業，請稍候...`);
-            showLoading(true);
+            showLoading(true, '批次批改中...');
 
-            // 獲取評分標準和回饋詳細程度
-            const criteriaLevel = gradingCriteriaSelect.value;
-            const feedbackLevel = aiFeedbackLevelSelect.value;
+            // 更新UI顯示處理中狀態
+            pendingAssignments.forEach(submission => {
+                submission.aiStatus = '處理中';
+            });
+            renderAssignmentList(currentAssignments);
 
-            // 準備批次作業數據
-            const assignments = pendingAssignments.map(submission => ({
-                id: submission.id,
-                studentId: submission.studentId,
-                courseId: submission.courseId,
-                assignmentId: submission.assignmentId,
-                content: submission.content
-            }));
-
-            // 批次處理配置
-            const options = {
-                criteriaLevel: criteriaLevel,
-                feedbackLevel: feedbackLevel
-            };
-
-            // 進度回調函數
-            const onProgress = (completed, total, result) => {
-                const percentage = Math.round((completed / total) * 100);
-                console.log(`批次批改進度: ${percentage}% (${completed}/${total})`);
-                
-                // 這裡可以添加更新UI的代碼，例如更新進度條
-            };
-
-            // 調用AI服務進行批次批改
-            aiClient.batchGradeAssignments(assignments, options, onProgress)
-                .then(results => {
-                    // 處理批次批改結果
-                    let successCount = 0;
-                    let failedCount = 0;
-
-                    results.forEach(result => {
-                        if (result.success) {
-                            successCount++;
-                            
-                            // 更新對應作業的數據
-                            const submission = currentAssignments.find(s => s.id === result.assignmentId);
-                            if (submission) {
-                                submission.aiStatus = '已完成';
-                                submission.aiScore = result.score;
-                                submission.aiGrade = {
-                                    score: result.score,
-                                    gradingItems: result.gradingItems,
-                                    summary: result.summary,
-                                    feedback: result.feedback
-                                };
-                            }
-                        } else {
-                            failedCount++;
-                            
-                            // 標記失敗的作業
-                            const submission = currentAssignments.find(s => s.id === result.assignmentId);
-                            if (submission) {
-                                submission.aiStatus = '失敗';
-                            }
-                        }
+            if (isDevelopment) {
+                // 模擬批次處理
+                setTimeout(() => {
+                    pendingAssignments.forEach(submission => {
+                        const score = Math.floor(Math.random() * 31) + 70; // 70-100分之間
+                        submission.aiStatus = '已完成';
+                        submission.aiScore = score;
+                        submission.aiGrade = generateMockAiGrading(score);
                     });
-
-                    // 完成後更新UI
-                    alert(`批次批改完成！成功: ${successCount} 份，失敗: ${failedCount} 份`);
+                    
+                    // 刷新作業列表
                     renderAssignmentList(currentAssignments);
                     showLoading(false);
-                })
-                .catch(error => {
-                    console.error('批次批改錯誤:', error);
-                    alert(`批次批改發生錯誤: ${error.message}`);
-                    showLoading(false);
+                    
+                    alert(`批次批改完成！已處理 ${pendingAssignments.length} 份作業。`);
+                }, 3000);
+                return;
+            }
+
+            // 準備請求數據
+            const requestData = {
+                submissions: pendingAssignments.map(s => ({
+                    id: s.id,
+                    studentId: s.studentId,
+                    content: s.content
+                })),
+                gradingOptions: {
+                    strictness: document.getElementById('grading-criteria').value,
+                    detailLevel: document.getElementById('ai-feedback-level').value
+                }
+            };
+
+            // 調用 Netlify Function API
+            fetch('/.netlify/functions/api/batch-grading', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`API請求失敗: ${response.status} ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    console.log('批次批改結果:', data);
+                    
+                    // 更新作業數據
+                    data.results.forEach(result => {
+                        const assignment = currentAssignments.find(a => a.id === result.id);
+                        if (assignment) {
+                            assignment.aiStatus = '已完成';
+                            assignment.aiScore = result.score;
+                            assignment.aiGrade = result.grading;
+                        }
+                    });
+                    
+                    // 顯示完成訊息
+                    alert(`批次批改完成！已處理 ${data.completedCount} 份作業。${data.failedCount ? `有 ${data.failedCount} 份失敗。` : ''}`);
+                } else {
+                    throw new Error(data.message || '批次批改失敗');
+                }
+            })
+            .catch(error => {
+                console.error('批次批改發生錯誤:', error);
+                alert(`批次批改發生錯誤: ${error.message}`);
+                
+                // 重置作業狀態
+                pendingAssignments.forEach(submission => {
+                    submission.aiStatus = '未處理';
                 });
+            })
+            .finally(() => {
+                // 刷新作業列表
+                renderAssignmentList(currentAssignments);
+                showLoading(false);
+            });
         }
     }
 
@@ -951,9 +847,8 @@ ORDER BY course_count DESC;`
         }
 
         // 顯示儲存中狀態
-        showLoading(true);
+        showLoading(true, '儲存中...');
         saveGradeBtn.disabled = true;
-        saveGradeBtn.textContent = '儲存中...';
 
         // 更新當前作業數據
         currentAssignmentData.teacherScore = parseInt(teacherScore);
@@ -971,8 +866,20 @@ ORDER BY course_count DESC;`
             aiScoreAccepted: document.getElementById('accept-ai-grade').checked
         };
 
+        if (isDevelopment) {
+            // 模擬延遲
+            setTimeout(() => {
+                alert('批改結果已儲存！');
+                modal.style.display = 'none';
+                renderAssignmentList(currentAssignments);
+                saveGradeBtn.disabled = false;
+                showLoading(false);
+            }, 1000);
+            return;
+        }
+
         // 發送到API
-        fetch(`/api/teacher/grade-assignment`, {
+        fetch('/.netlify/functions/api/grade-assignment', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -981,48 +888,93 @@ ORDER BY course_count DESC;`
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('儲存評分失敗');
+                throw new Error(`伺服器回應錯誤: ${response.status} ${response.statusText}`);
             }
             return response.json();
         })
         .then(result => {
-            alert('批改結果已儲存！');
-            modal.style.display = 'none';
-            
-            // 重新渲染作業列表
-            renderAssignmentList(currentAssignments);
+            if (result.success) {
+                alert('批改結果已儲存！');
+                modal.style.display = 'none';
+            } else {
+                throw new Error(result.message || '儲存失敗');
+            }
         })
         .catch(error => {
             console.error('儲存評分錯誤:', error);
-            // 仍然在本地更新UI，但顯示警告
-            alert(`無法與伺服器同步評分結果: ${error.message}。結果已暫存在本地。`);
+            alert(`無法儲存評分結果: ${error.message}。結果已暫存在本地。`);
             modal.style.display = 'none';
-            
-            // 重新渲染作業列表
-            renderAssignmentList(currentAssignments);
         })
         .finally(() => {
-            // 恢復按鈕狀態
+            // 重新渲染作業列表
+            renderAssignmentList(currentAssignments);
             saveGradeBtn.disabled = false;
-            saveGradeBtn.textContent = '儲存批改結果';
             showLoading(false);
         });
     }
 
     // 顯示/隱藏載入狀態
-    function showLoading(show) {
+    function showLoading(show, message = '處理中...') {
         isLoading = show;
         
-        // 可以在這裡添加顯示載入動畫或禁用按鈕的代碼
+        // 禁用或啟用所有操作按鈕
         const buttons = document.querySelectorAll('button:not(.close-modal)');
         buttons.forEach(button => {
-            button.disabled = show && !button.classList.contains('view-assignment');
+            if (!button.classList.contains('view-assignment')) {
+                button.disabled = show;
+            }
         });
         
-        // 如果有載入指示器元素
-        const loadingIndicator = document.getElementById('loading-indicator');
-        if (loadingIndicator) {
-            loadingIndicator.style.display = show ? 'block' : 'none';
+        // 如果沒有加載指示器，添加一個
+        let loadingIndicator = document.getElementById('loading-indicator');
+        if (!loadingIndicator && show) {
+            loadingIndicator = document.createElement('div');
+            loadingIndicator.id = 'loading-indicator';
+            loadingIndicator.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(255, 255, 255, 0.7);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+            `;
+            loadingIndicator.innerHTML = `
+                <div style="text-align: center;">
+                    <div class="spinner" style="
+                        border: 4px solid #f3f3f3;
+                        border-top: 4px solid #3498db;
+                        border-radius: 50%;
+                        width: 40px;
+                        height: 40px;
+                        margin: 0 auto 15px;
+                        animation: spin 2s linear infinite;
+                    "></div>
+                    <p>${message}</p>
+                </div>
+            `;
+            document.body.appendChild(loadingIndicator);
+            
+            // 添加旋轉動畫的樣式
+            if (!document.getElementById('spinner-style')) {
+                const style = document.createElement('style');
+                style.id = 'spinner-style';
+                style.textContent = `
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        } else if (loadingIndicator) {
+            loadingIndicator.style.display = show ? 'flex' : 'none';
+            if (show) {
+                loadingIndicator.querySelector('p').textContent = message;
+            }
         }
     }
 
