@@ -834,28 +834,7 @@ int main() {
     function saveGradeResult() {
         const teacherScore = document.getElementById('teacher-score').value;
         const teacherComments = document.getElementById('teacher-comments').value;
-
-        // 驗證分數輸入
-        if (!teacherScore) {
-            alert('請輸入評分分數');
-            return;
-        }
-
-        if (isNaN(teacherScore) || teacherScore < 0 || teacherScore > 100) {
-            alert('分數必須是0-100之間的數字');
-            return;
-        }
-
-        // 顯示儲存中狀態
-        showLoading(true, '儲存中...');
-        saveGradeBtn.disabled = true;
-
-        // 更新當前作業數據
-        currentAssignmentData.teacherScore = parseInt(teacherScore);
-        currentAssignmentData.teacherComments = teacherComments;
-        currentAssignmentData.teacherConfirmed = true;
-
-        // 準備要發送的數據
+    
         const gradeData = {
             submissionId: currentAssignmentData.id,
             studentId: currentAssignmentData.studentId,
@@ -865,21 +844,8 @@ int main() {
             comments: teacherComments,
             aiScoreAccepted: document.getElementById('accept-ai-grade').checked
         };
-
-        if (isDevelopment) {
-            // 模擬延遲
-            setTimeout(() => {
-                alert('批改結果已儲存！');
-                modal.style.display = 'none';
-                renderAssignmentList(currentAssignments);
-                saveGradeBtn.disabled = false;
-                showLoading(false);
-            }, 1000);
-            return;
-        }
-
-        // 發送到API
-        fetch('/.netlify/functions/api/grade-assignment', {
+    
+        fetch('/.netlify/functions/grade-assignment', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -887,10 +853,23 @@ int main() {
             body: JSON.stringify(gradeData)
         })
         .then(response => {
-            if (!response.ok) {
-                throw new Error(`伺服器回應錯誤: ${response.status} ${response.statusText}`);
-            }
-            return response.json();
+            console.log('Response status:', response.status);
+            console.log('Response statusText:', response.statusText);
+            
+            return response.text().then(text => {
+                console.log('Response text:', text);
+                
+                if (!response.ok) {
+                    throw new Error(`伺服器回應錯誤: ${response.status} ${response.statusText} - ${text}`);
+                }
+                
+                try {
+                    return JSON.parse(text);
+                } catch (parseError) {
+                    console.error('JSON解析錯誤:', parseError);
+                    throw new Error('伺服器返回的不是有效的JSON');
+                }
+            });
         })
         .then(result => {
             if (result.success) {
@@ -902,11 +881,16 @@ int main() {
         })
         .catch(error => {
             console.error('儲存評分錯誤:', error);
+            console.error('錯誤詳情:', {
+                name: error.name,
+                message: error.message,
+                stack: error.stack
+            });
+            
             alert(`無法儲存評分結果: ${error.message}。結果已暫存在本地。`);
             modal.style.display = 'none';
         })
         .finally(() => {
-            // 重新渲染作業列表
             renderAssignmentList(currentAssignments);
             saveGradeBtn.disabled = false;
             showLoading(false);

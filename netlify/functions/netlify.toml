@@ -11,3 +11,8 @@
   from = "/ai-grading/*"
   to = "/.netlify/functions/ai-grading/:splat"
   status = 200
+
+  [[redirects]]
+  from = "/api/grade-assignment"
+  to = "/.netlify/functions/grade-assignment"
+  status = 200
