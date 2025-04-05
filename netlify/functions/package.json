@@ -1,13 +1,13 @@
 {
-    "name": "hwchecker-auth",
+    "name": "school-auth-function",
     "version": "1.0.0",
     "description": "Netlify Function for Authentication",
     "main": "auth.py",
     "dependencies": {
-        "cors": "^2.8.5",
-        "dotenv": "^16.4.7",
+        "flask": "^2.3.3",
         "pymongo": "^4.6.3",
-        "werkzeug": "^3.0.1"
+        "python-dotenv": "^1.0.0",
+        "Werkzeug": "^3.0.1"
     },
     "scripts": {
         "start": "netlify dev",

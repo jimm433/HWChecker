@@ -37,18 +37,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 4. 偵測當前環境並設定 API 端點
-    function getApiUrl(endpoint) {
-        const baseUrls = {
-            'localhost': 'http://localhost:8888',
-            '127.0.0.1': 'http://localhost:8888',
-            'test.netlify.app': 'https://your-site.netlify.app',
-            'production-domain.com': 'https://your-production-domain.com'
-        };
-
-        const currentHost = window.location.hostname;
-        const baseUrl = baseUrls[currentHost] || '';
-
-        return `${baseUrl}/api/${endpoint}`;
+    function getApiUrl() {
+        // 對於 Netlify 部署，使用相對路徑
+        return '/.netlify/functions/auth';
     }
 
     // 5. 登入函式
@@ -71,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formElement.appendChild(loadingMsg);
 
         // 確定 API 端點
-        const apiUrl = getApiUrl('login');
+        const apiUrl = getApiUrl();
         console.log('嘗試連接到API端點:', apiUrl);
 
         // 發送 API 請求
@@ -88,13 +79,13 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => {
                 console.log('API 回應狀態:', response.status);
-                console.log('API 回應標頭:', Object.fromEntries(response.headers.entries()));
 
                 // 檢查回應是否成功
                 if (!response.ok) {
-                    // 如果回應不成功，拋出錯誤
-                    return response.json().then(errorData => {
-                        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                    // 如果回應不成功，嘗試解析錯誤訊息
+                    return response.text().then(errorText => {
+                        console.error('錯誤回應內容:', errorText);
+                        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
                     });
                 }
 

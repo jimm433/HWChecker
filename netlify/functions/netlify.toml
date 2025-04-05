@@ -3,16 +3,6 @@
   functions = "netlify/functions"
 
 [[redirects]]
-  from = "/api/ai-grading"
-  to = "/.netlify/functions/ai-grading"
-  status = 200
-
-[[redirects]]
-  from = "/api/batch-grading"
-  to = "/.netlify/functions/batch-grading"
-  status = 200
-
-[[redirects]]
   from = "/api/login"
   to = "/.netlify/functions/auth"
   status = 200
