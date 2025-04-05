@@ -44,10 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Netlify 環境
-        const apiUrl = '/.netlify/functions/auth';
-        console.log('當前API端點:', apiUrl);
-        console.log('當前主機:', window.location.hostname);
-        return apiUrl;
+        return '/.netlify/functions/auth';
     }
 
     // 5. 登入函式

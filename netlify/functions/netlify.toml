@@ -1,6 +1,6 @@
 [build]
-  publish = "."
   functions = "netlify/functions"
+  publish = "."
 
 [[redirects]]
   from = "/api/login"
@@ -9,16 +9,6 @@
 
 [[redirects]]
   from = "/api/register"
-  to = "/.netlify/functions/auth"
-  status = 200
-
-[[redirects]]
-  from = "/api/logout"
-  to = "/.netlify/functions/auth"
-  status = 200
-
-[[redirects]]
-  from = "/api/reset-password"
   to = "/.netlify/functions/auth"
   status = 200
 
