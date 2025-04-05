@@ -1,11 +1,11 @@
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
+import json
 from dotenv import load_dotenv
-from bson import ObjectId
-import logging
+import traceback
 
 # 載入環境變數
 load_dotenv()
@@ -13,103 +13,41 @@ load_dotenv()
 # 設置靜態文件目錄為項目根目錄
 static_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
 app = Flask(__name__, static_url_path='', static_folder=static_folder)
-CORS(app)  # 允許跨域請求
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # MongoDB 連接
 MONGODB_URI = os.getenv("MONGODB_URI")
 
-# 全局 MongoDB 客戶端
-mongo_client = None
-
-# 設置日誌
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
 def connect_to_mongodb():
-    global mongo_client
-    if mongo_client is None:
-        try:
-            mongo_client = MongoClient(MONGODB_URI)
-            mongo_client.admin.command('ping')
-            logger.info("成功連接到 MongoDB")
-        except Exception as e:
-            logger.error(f"連接到 MongoDB 時發生錯誤: {e}")
-            raise e
-    return mongo_client
-
-# 用戶註冊
-@app.route('/api/register', methods=['POST', 'OPTIONS'])
-def register():
-    if request.method == 'OPTIONS':
-        return '', 200
-    
     try:
-        data = request.json
-        username = data.get('username')
-        password = data.get('password')
-        email = data.get('email')
-        role = data.get('role', 'student')  # 預設為學生角色
-
-        if not all([username, password, email]):
-            return jsonify({
-                'success': False, 
-                'message': '請提供完整的用戶信息'
-            }), 400
-
-        client = connect_to_mongodb()
-        try:
-            db = client["school_system"]
-            users_collection = db["users"]
-
-            # 檢查用戶是否已存在
-            if users_collection.find_one({"username": username}):
-                return jsonify({
-                    'success': False, 
-                    'message': '用戶名已存在'
-                }), 400
-
-            # 密碼加密
-            hashed_password = generate_password_hash(password)
-
-            # 創建用戶
-            user_data = {
-                "username": username,
-                "password": hashed_password,
-                "email": email,
-                "role": role
-            }
-            result = users_collection.insert_one(user_data)
-
-            return jsonify({
-                'success': True, 
-                'message': '用戶註冊成功',
-                'userId': str(result.inserted_id)
-            })
-        finally:
-            client.close()
-
+        client = MongoClient(MONGODB_URI)
+        client.admin.command('ping')
+        print("成功連接到 MongoDB")
+        return client
     except Exception as e:
-        return jsonify({
-            'success': False, 
-            'message': f'註冊失敗: {str(e)}'
-        }), 500
+        print(f"連接到 MongoDB 時發生錯誤: {e}")
+        raise e
 
-# 用戶登入
-@app.route('/api/login', methods=['POST', 'OPTIONS'])
-def login():
-    if request.method == 'OPTIONS':
-        return '', 200
-    
+def login_handler(event, context):
     try:
-        data = request.json
-        username = data.get('username')
-        password = data.get('password')
+        # 解析 JSON 請求體
+        body = json.loads(event.get('body', '{}'))
+        
+        username = body.get('username')
+        password = body.get('password')
 
-        if not all([username, password]):
-            return jsonify({
-                'success': False, 
-                'message': '請提供用戶名和密碼'
-            }), 400
+        if not username or not password:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({
+                    'success': False, 
+                    'message': '請提供用戶名和密碼'
+                }),
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                }
+            }
 
         client = connect_to_mongodb()
         try:
@@ -119,120 +57,97 @@ def login():
             # 查找用戶
             user = users_collection.find_one({"username": username})
             if not user:
-                return jsonify({
-                    'success': False, 
-                    'message': '用戶不存在'
-                }), 401
+                return {
+                    'statusCode': 401,
+                    'body': json.dumps({
+                        'success': False, 
+                        'message': '用戶不存在'
+                    }),
+                    'headers': {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    }
+                }
 
             # 驗證密碼
             if not check_password_hash(user['password'], password):
-                return jsonify({
-                    'success': False, 
-                    'message': '密碼錯誤'
-                }), 401
+                return {
+                    'statusCode': 401,
+                    'body': json.dumps({
+                        'success': False, 
+                        'message': '密碼錯誤'
+                    }),
+                    'headers': {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    }
+                }
 
             # 登入成功
-            return jsonify({
-                'success': True, 
-                'message': '登入成功',
-                'user': {
-                    'userId': str(user['_id']),
-                    'username': user['username'],
-                    'role': user.get('role', 'student')
+            return {
+                'statusCode': 200,
+                'body': json.dumps({
+                    'success': True, 
+                    'message': '登入成功',
+                    'user': {
+                        'userId': str(user['_id']),
+                        'username': user['username'],
+                        'role': user.get('role', 'student')
+                    }
+                }),
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
                 }
-            })
+            }
         finally:
             client.close()
 
     except Exception as e:
-        return jsonify({
-            'success': False, 
-            'message': f'登入失敗: {str(e)}'
-        }), 500
-
-# 用戶登出
-@app.route('/api/logout', methods=['POST', 'OPTIONS'])
-def logout():
-    if request.method == 'OPTIONS':
-        return '', 200
-    
-    try:
-        # 如果使用 session 登出
-        session.clear()
-        return jsonify({
-            'success': True, 
-            'message': '登出成功'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': False, 
-            'message': f'登出失敗: {str(e)}'
-        }), 500
-
-# 重置密碼
-@app.route('/api/reset-password', methods['POST', 'OPTIONS'])
-def reset_password():
-    if request.method == 'OPTIONS':
-        return '', 200
-    
-    try:
-        data = request.json
-        username = data.get('username')
-        email = data.get('email')
-        new_password = data.get('new_password')
-
-        if not all([username, email, new_password]):
-            return jsonify({
+        print(f'登入失敗: {e}')
+        print(traceback.format_exc())
+        return {
+            'statusCode': 500,
+            'body': json.dumps({
                 'success': False, 
-                'message': '請提供完整信息'
-            }), 400
+                'message': f'登入失敗: {str(e)}'
+            }),
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            }
+        }
 
-        client = connect_to_mongodb()
-        try:
-            db = client["school_system"]
-            users_collection = db["users"]
+# 處理 OPTIONS 請求的處理器
+def options_handler(event, context):
+    return {
+        'statusCode': 200,
+        'body': '',
+        'headers': {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type'
+        }
+    }
 
-            # 查找用戶
-            user = users_collection.find_one({
-                "username": username,
-                "email": email
-            })
-
-            if not user:
-                return jsonify({
-                    'success': False, 
-                    'message': '用戶信息不匹配'
-                }), 401
-
-            # 重置密碼
-            hashed_new_password = generate_password_hash(new_password)
-            users_collection.update_one(
-                {"username": username},
-                {"$set": {"password": hashed_new_password}}
-            )
-
-            return jsonify({
-                'success': True, 
-                'message': '密碼重置成功'
-            })
-        finally:
-            client.close()
-
-    except Exception as e:
-        return jsonify({
-            'success': False, 
-            'message': f'密碼重置失敗: {str(e)}'
-        }), 500
-
-@app.route('/api/health', methods=['GET'])
-def health_check():
-    try:
-        # 測試 MongoDB 連接
-        client = connect_to_mongodb()
-        client.admin.command('ping')
-        return jsonify({'status': 'ok'}), 200
-    except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(debug=True, port=8000)
+# 主處理函數
+def handler(event, context):
+    # 檢查請求方法
+    http_method = event.get('httpMethod', '')
+    
+    if http_method == 'OPTIONS':
+        return options_handler(event, context)
+    elif http_method == 'POST':
+        return login_handler(event, context)
+    else:
+        return {
+            'statusCode': 405,
+            'body': json.dumps({
+                'success': False, 
+                'message': '不支持的方法'
+            }),
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            }
+        }

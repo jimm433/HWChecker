@@ -36,7 +36,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // 5. 修改後的登入函式 (連接 API)
+    // 4. 偵測當前環境並設定 API 端點
+    function getApiUrl(endpoint) {
+        const baseUrls = {
+            'localhost': 'http://localhost:8888',
+            '127.0.0.1': 'http://localhost:8888',
+            'test.netlify.app': 'https://your-site.netlify.app',
+            'production-domain.com': 'https://your-production-domain.com'
+        };
+
+        const currentHost = window.location.hostname;
+        const baseUrl = baseUrls[currentHost] || '';
+
+        return `${baseUrl}/api/${endpoint}`;
+    }
+
+    // 5. 登入函式
     function loginUser(formElement, role) {
         clearError(formElement);
 
@@ -55,28 +70,34 @@ document.addEventListener('DOMContentLoaded', function() {
         loadingMsg.className = 'loading-message';
         formElement.appendChild(loadingMsg);
 
-        // 確定API端點
-        let apiUrl = '';
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            // 本地開發環境
-            apiUrl = 'http://localhost:8888/.netlify/functions/api/login';
-        } else {
-            // 生產環境
-            apiUrl = '/.netlify/functions/api/login';
-        }
-
+        // 確定 API 端點
+        const apiUrl = getApiUrl('login');
         console.log('嘗試連接到API端點:', apiUrl);
 
-        // 發送API請求
+        // 發送 API 請求
         fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ userId, password, role })
+                body: JSON.stringify({
+                    username: userId,
+                    password: password,
+                    role: role
+                })
             })
             .then(response => {
                 console.log('API 回應狀態:', response.status);
+                console.log('API 回應標頭:', Object.fromEntries(response.headers.entries()));
+
+                // 檢查回應是否成功
+                if (!response.ok) {
+                    // 如果回應不成功，拋出錯誤
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                    });
+                }
+
                 return response.json();
             })
             .then(data => {
@@ -88,9 +109,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (data.success) {
                     // 登入成功
-                    localStorage.setItem('userId', data.user.id);
+                    localStorage.setItem('userId', data.user.userId);
                     localStorage.setItem('userRole', data.user.role);
-                    localStorage.setItem('userName', data.user.name);
+                    localStorage.setItem('username', data.user.username);
 
                     // 導向相應頁面
                     if (role === 'teacher') {
@@ -104,13 +125,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             })
             .catch(error => {
-                console.error('登入錯誤:', error);
+                console.error('登入錯誤詳細信息:', error);
 
                 // 移除載入提示
                 const loadingElement = formElement.querySelector('.loading-message');
                 if (loadingElement) loadingElement.remove();
 
-                showError('伺服器連接錯誤，請稍後再試', formElement);
+                // 更詳細的錯誤訊息
+                if (error.message.includes('Failed to fetch')) {
+                    showError('無法連接到伺服器。請檢查網路連線。', formElement);
+                } else {
+                    showError(`登入失敗: ${error.message}`, formElement);
+                }
             });
     }
 
