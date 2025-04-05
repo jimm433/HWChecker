@@ -38,11 +38,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 4. 偵測當前環境並設定 API 端點
     function getApiUrl() {
-        // 開發環境
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            return '/api/login';
-        }
-
         // Netlify 環境
         return '/.netlify/functions/auth';
     }

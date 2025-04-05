@@ -12,6 +12,19 @@ logger = logging.getLogger(__name__)
 # 載入環境變量
 load_dotenv()
 
+# 獲取環境變數
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+MONGODB_URI = os.getenv("MONGODB_URI")
+
+# 檢查環境變數是否正確載入
+if not MONGODB_URI:
+    logger.error("環境變數 MONGODB_URI 未設置")
+    raise RuntimeError("環境變數 MONGODB_URI 未設置")
+
+if not OPENAI_API_KEY:
+    logger.error("環境變數 OPENAI_API_KEY 未設置")
+    raise RuntimeError("環境變數 OPENAI_API_KEY 未設置")
+
 def connect_to_mongodb():
     mongodb_uri = os.getenv("MONGODB_URI")
     try:
