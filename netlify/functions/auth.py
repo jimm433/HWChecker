@@ -4,6 +4,8 @@ from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from dotenv import load_dotenv
+from bson import ObjectId
+import logging
 
 # 載入環境變數
 load_dotenv()
@@ -16,15 +18,24 @@ CORS(app)  # 允許跨域請求
 # MongoDB 連接
 MONGODB_URI = os.getenv("MONGODB_URI")
 
+# 全局 MongoDB 客戶端
+mongo_client = None
+
+# 設置日誌
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 def connect_to_mongodb():
-    try:
-        client = MongoClient(MONGODB_URI)
-        client.admin.command('ping')
-        print("成功連接到 MongoDB")
-        return client
-    except Exception as e:
-        print(f"連接到 MongoDB 時發生錯誤: {e}")
-        raise e
+    global mongo_client
+    if mongo_client is None:
+        try:
+            mongo_client = MongoClient(MONGODB_URI)
+            mongo_client.admin.command('ping')
+            logger.info("成功連接到 MongoDB")
+        except Exception as e:
+            logger.error(f"連接到 MongoDB 時發生錯誤: {e}")
+            raise e
+    return mongo_client
 
 # 用戶註冊
 @app.route('/api/register', methods=['POST', 'OPTIONS'])
@@ -159,7 +170,7 @@ def logout():
         }), 500
 
 # 重置密碼
-@app.route('/api/reset-password', methods=['POST', 'OPTIONS'])
+@app.route('/api/reset-password', methods['POST', 'OPTIONS'])
 def reset_password():
     if request.method == 'OPTIONS':
         return '', 200
@@ -212,6 +223,16 @@ def reset_password():
             'success': False, 
             'message': f'密碼重置失敗: {str(e)}'
         }), 500
+
+@app.route('/api/health', methods=['GET'])
+def health_check():
+    try:
+        # 測試 MongoDB 連接
+        client = connect_to_mongodb()
+        client.admin.command('ping')
+        return jsonify({'status': 'ok'}), 200
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=8000)
