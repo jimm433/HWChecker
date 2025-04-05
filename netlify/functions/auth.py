@@ -4,6 +4,7 @@ import logging
 from pymongo import MongoClient
 from werkzeug.security import check_password_hash
 from dotenv import load_dotenv
+import traceback
 
 # 配置日誌
 logging.basicConfig(level=logging.INFO, 
@@ -28,6 +29,12 @@ def connect_to_mongodb():
     except Exception as e:
         logger.error(f"連接到 MongoDB 時發生錯誤: {e}")
         raise
+
+def lambda_handler(event, context):
+    """
+    Netlify Functions 的主要入口點
+    """
+    return handler(event, context)
 
 def handler(event, context):
     try:

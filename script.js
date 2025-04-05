@@ -38,8 +38,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 4. 偵測當前環境並設定 API 端點
     function getApiUrl() {
-        // 對於 Netlify 部署，使用相對路徑
-        return '/.netlify/functions/auth';
+        // 開發環境
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            return '/api/login';
+        }
+
+        // Netlify 環境
+        const apiUrl = '/.netlify/functions/auth';
+        console.log('當前API端點:', apiUrl);
+        console.log('當前主機:', window.location.hostname);
+        return apiUrl;
     }
 
     // 5. 登入函式
