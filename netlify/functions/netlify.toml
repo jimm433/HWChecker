@@ -12,6 +12,26 @@
   to = "/.netlify/functions/batch-grading"
   status = 200
 
+[[redirects]]
+  from = "/api/login"
+  to = "/.netlify/functions/auth"
+  status = 200
+
+[[redirects]]
+  from = "/api/register"
+  to = "/.netlify/functions/auth"
+  status = 200
+
+[[redirects]]
+  from = "/api/logout"
+  to = "/.netlify/functions/auth"
+  status = 200
+
+[[redirects]]
+  from = "/api/reset-password"
+  to = "/.netlify/functions/auth"
+  status = 200
+
 [[headers]]
   for = "/*"
   [headers.values]
