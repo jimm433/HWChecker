@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 import os
 from openai import OpenAI
 from pymongo import MongoClient
@@ -10,7 +10,9 @@ import concurrent.futures
 # 載入環境變數
 load_dotenv()
 
-app = Flask(__name__)
+# 設置靜態文件目錄為項目根目錄
+static_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
+app = Flask(__name__, static_url_path='', static_folder=static_folder)
 CORS(app)  # 允許跨域請求
 
 # 獲取環境變數
@@ -19,6 +21,19 @@ MONGODB_URI = os.getenv("MONGODB_URI")
 
 # 初始化 OpenAI 客戶端
 openai_client = OpenAI(api_key=OPENAI_API_KEY)
+
+# 提供首頁 index.html
+@app.route('/')
+def home():
+    return send_from_directory(app.static_folder, 'index.html')
+
+# 提供所有其他靜態文件
+@app.route('/<path:path>')
+def serve_static(path):
+    if os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return "File not found", 404
 
 # 連接到 MongoDB
 def connect_to_mongodb():
@@ -31,6 +46,19 @@ def connect_to_mongodb():
     except Exception as e:
         print(f"連接到 MongoDB 時發生錯誤: {e}")
         raise e
+
+# 為了兼容原有代碼，提供舊的API路徑
+@app.route('/.netlify/functions/ai-grading', methods=['POST', 'OPTIONS'])
+def legacy_ai_grading():
+    return ai_grading()
+
+@app.route('/.netlify/functions/batch-grading', methods=['POST', 'OPTIONS'])
+def legacy_batch_grading():
+    return batch_grading()
+
+@app.route('/.netlify/functions/grade-assignment', methods=['POST', 'OPTIONS'])
+def legacy_grade_assignment():
+    return grade_assignment()
 
 # AI 批改單個作業
 @app.route('/api/ai-grading', methods=['POST', 'OPTIONS'])
